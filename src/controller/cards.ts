@@ -27,7 +27,7 @@ export class CardsController {
   
   public async findMany (req: Request, res: Response) {
     try {
-      const response = await this.cardsModel.findMany(req.body);
+      const response = await this.cardsModel.findMany();
 
       return new ResponseHandler().success(
         res,

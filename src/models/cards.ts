@@ -12,7 +12,7 @@ export class CardsModel {
     return await this.prisma.cards.create({ data: card }); 
   }
 
-  public async findMany(card: any): Promise<IFindManyCardsResponse[]> { 
+  public async findMany(): Promise<IFindManyCardsResponse[]> { 
     return await this.prisma.cards.findMany({ 
       where: {
         deletedAt: null

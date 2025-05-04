@@ -24,4 +24,19 @@ export class CategoriesController {
       return errorHandler(err as Error, res)
     }
   }
+
+  public async findMany (req: Request, res: Response) {
+    try {
+      const response = await this.categoriesModel.findMany();
+
+      return new ResponseHandler().success(
+        res,
+        200,
+        response,
+        'Categorias listadas com sucesso'
+      );
+    } catch (err) {
+      return errorHandler(err as Error, res)
+    }
+  }
 }
