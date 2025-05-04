@@ -11,6 +11,9 @@ model accounts {
   id           Int            @id @default(autoincrement())
   name         String         @db.VarChar(100)
   balance      Decimal?       @default(0.00) @db.Decimal(10, 2)
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt    DateTime?      @map("updated_at") @db.Timestamp(0)
+  deletedAt    DateTime?      @map("deleted_at") @db.Timestamp(0)
   transactions transactions[]
 }
 
@@ -20,12 +23,18 @@ model cards {
   creditLimit  Decimal?       @default(0.00) @map("credit_limit") @db.Decimal(10, 2)
   closingDay   Int            @map("closing_day") @db.UnsignedTinyInt
   dueday       Int            @map("due_day") @db.UnsignedTinyInt
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt    DateTime?      @map("updated_at") @db.Timestamp(0)
+  deletedAt    DateTime?      @map("deleted_at") @db.Timestamp(0)
   transactions transactions[]
 }
 
 model categories {
   id           Int            @id @default(autoincrement())
   name         String         @db.VarChar(100)
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt    DateTime?      @map("updated_at") @db.Timestamp(0)
+  deletedAt    DateTime?      @map("deleted_at") @db.Timestamp(0)
   transactions transactions[]
 }
 
@@ -43,6 +52,9 @@ model transactions {
   categoryId        Int?                @map("category_id")
   accountId         Int?                @map("account_id")
   cardId            Int?                @map("card_id")
+  createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt         DateTime?           @map("updated_at") @db.Timestamp(0)
+  deletedAt         DateTime?           @map("deleted_at") @db.Timestamp(0)
   categories        categories?         @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_ibfk_1")
   accounts          accounts?           @relation(fields: [accountId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_ibfk_2")
   cards             cards?              @relation(fields: [cardId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_ibfk_3")
