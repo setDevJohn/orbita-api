@@ -1,14 +1,63 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model accounts {
+  id           Int            @id @default(autoincrement())
+  name         String         @db.VarChar(100)
+  balance      Decimal?       @default(0.00) @db.Decimal(10, 2)
+  transactions transactions[]
+}
+
+model cards {
+  id           Int            @id @default(autoincrement())
+  name         String         @db.VarChar(100)
+  creditLimit  Decimal?       @default(0.00) @map("credit_limit") @db.Decimal(10, 2)
+  closingDay   Int            @map("closing_day") @db.UnsignedTinyInt
+  dueday       Int            @map("due_day") @db.UnsignedTinyInt
+  transactions transactions[]
+}
+
+model categories {
+  id           Int            @id @default(autoincrement())
+  name         String         @db.VarChar(100)
+  transactions transactions[]
+}
+
+model transactions {
+  id                Int                 @id @default(autoincrement())
+  name              String              @db.VarChar(150)
+  type              transactions_type
+  amount            Decimal             @db.Decimal(10, 2)
+  transactionDate   DateTime            @map("transaction_date") @db.Timestamp(0)
+  source            transactions_source
+  referenceMonth    Int                 @map("reference_month") @db.UnsignedTinyInt
+  referenceYear     Int                 @map("reference_year") @db.UnsignedSmallInt
+  currenInstallment Int?                @default(1) @map("current_installment") @db.UnsignedTinyInt
+  totalInstallments Int?                @default(1) @map("total_installments") @db.UnsignedTinyInt
+  categoryId        Int?                @map("category_id")
+  accountId         Int?                @map("account_id")
+  cardId            Int?                @map("card_id")
+  categories        categories?         @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_ibfk_1")
+  accounts          accounts?           @relation(fields: [accountId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_ibfk_2")
+  cards             cards?              @relation(fields: [cardId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_ibfk_3")
+
+  @@index([accountId], map: "account_id")
+  @@index([cardId], map: "card_id")
+  @@index([categoryId], map: "category_id")
+}
+
+enum transactions_type {
+  income
+  expense
+}
+
+enum transactions_source {
+  account
+  card
 }

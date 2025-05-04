@@ -8,9 +8,11 @@
   "main": "index.js",
   "scripts": {
     "dev": "npx tsx watch src/server.ts",
+    "prisma": "npx prisma db pull && npx prisma generate",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@prisma/client": "^6.7.0",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "morgan": "^1.10.0"
@@ -24,6 +26,7 @@
     "eslint": "^9.24.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-import": "^2.31.0",
+    "prisma": "^6.7.0",
     "tsx": "^4.19.3",
     "typescript": "^5.8.3"
   }
