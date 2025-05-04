@@ -24,4 +24,19 @@ export class CardsController {
       return errorHandler(err as Error, res)
     }
   }
+  
+  public async findMany (req: Request, res: Response) {
+    try {
+      const response = await this.cardsModel.findMany(req.body);
+
+      return new ResponseHandler().success(
+        res,
+        200,
+        response,
+        'Cartões listados com sucesso'
+      );
+    } catch (err) {
+      return errorHandler(err as Error, res)
+    }
+  }
 }
