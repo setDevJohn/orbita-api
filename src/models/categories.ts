@@ -12,15 +12,15 @@ export class CategoriesModel {
     return await this.prisma.categories.create({ data: card }); 
   }
 
-    public async findMany(): Promise<IFindManyCategoriesResponse[]> { 
-      return await this.prisma.categories.findMany({ 
-        where: {
-          deletedAt: null
-        },
-        select: {
-          id: true,
-          name: true,
-        }
-      }); 
-    }
+  public async findMany(): Promise<IFindManyCategoriesResponse[]> { 
+    return await this.prisma.categories.findMany({ 
+      where: {
+        deletedAt: null
+      },
+      select: {
+        id: true,
+        name: true,
+      }
+    }); 
+  }
 }

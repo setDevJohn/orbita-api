@@ -10,4 +10,8 @@ accountsRoutes.post('/', async (req, res) => {
   await accountsController.create(req, res);
 });
 
+accountsRoutes.get('/', async (req, res) => {
+  await accountsController.findMany(req, res);
+});
+
 export {accountsRoutes}  
