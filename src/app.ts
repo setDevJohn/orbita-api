@@ -1,6 +1,6 @@
 import express, { Application } from 'express';
 import { routes } from './routes';
-// import cors from 'cors';
+import cors from 'cors';
 import morgan from 'morgan';
 
 const allowedOrigins = [
@@ -21,19 +21,18 @@ export class App {
 
 
   config() {
-    // this.app.use(cors({
-    //   origin: (origin, callback) => {
-    //     if (!origin || allowedOrigins.includes(origin)){
-    //       callback(null, true);
-    //     } else {
-    //       callback(new Error('Not allowed by CORS'));
-    //     }
-    //   },
-    //   methods: ["GET", "POST", "PUT", "DELETE"],
-    //   allowedHeaders: ["Content-Type", "Authorization"],
-    //   credentials: true
-    // }));
-    
+    this.app.use(cors({
+      origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)){
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
+      methods: ["GET", "POST", "PUT", "DELETE"],
+      allowedHeaders: ["Content-Type", "Authorization"],
+      credentials: true
+    }));
     this.app.use(morgan('dev'));
     this.app.use(express.json());
     this.app.use(routes);
