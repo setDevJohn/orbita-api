@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { IFindManyCardsResponse } from "../interfaces/cards";
+import { CardPayloadDTO, FindManyResponse } from "../interfaces/cards";
 
 export class CardsModel {
   prisma = new PrismaClient();
@@ -8,11 +8,11 @@ export class CardsModel {
     this.prisma = new PrismaClient(); 
   }
 
-  public async create(card: any) { 
+  public async create(card: CardPayloadDTO) { 
     return await this.prisma.cards.create({ data: card }); 
   }
 
-  public async findMany(): Promise<IFindManyCardsResponse[]> { 
+  public async findMany(): Promise<FindManyResponse[]> { 
     return await this.prisma.cards.findMany({ 
       where: {
         deletedAt: null
@@ -22,7 +22,7 @@ export class CardsModel {
         name: true,
         creditLimit: true,
         closingDay: true,
-        dueday: true,
+        dueDay: true,
       }
     }); 
   }

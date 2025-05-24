@@ -12,7 +12,14 @@ export class CardsController {
 
   public async create (req: Request, res: Response) {
     try {
-      const response = await this.cardsModel.create(req.body);
+      const payload = {
+        name: req.body.name,
+        creditLimit: req.body.creditLimit,
+        closingDay: req.body.closingDay,
+        dueDay: req.body.dueDay
+      }
+
+      const response = await this.cardsModel.create(payload);
 
       return new ResponseHandler().success(
         res,

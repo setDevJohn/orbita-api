@@ -13,4 +13,4 @@ cardsRoutes.get('/', async (req, res) => {
   await cardsController.findMany(req, res);
 });
 
-export {cardsRoutes}  
+export {cardsRoutes}

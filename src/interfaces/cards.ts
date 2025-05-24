@@ -1,9 +1,16 @@
 import { Decimal } from "@prisma/client/runtime/library";
 
-export interface IFindManyCardsResponse {
+// Card Base
+interface CardBase {
   id: number;
   name: string;
   creditLimit: Decimal | null;
   closingDay: number;
-  dueday: number; 
-}
+  dueDay: number;
+} 
+
+// Payload to create on model
+export type CardPayloadDTO = Omit<CardBase, 'id'>
+
+// FindMany Response
+export type FindManyResponse = CardBase

@@ -22,7 +22,7 @@ model cards {
   name         String         @db.VarChar(100)
   creditLimit  Decimal?       @default(0.00) @map("credit_limit") @db.Decimal(10, 2)
   closingDay   Int            @map("closing_day") @db.UnsignedTinyInt
-  dueday       Int            @map("due_day") @db.UnsignedTinyInt
+  dueDay       Int            @map("due_day") @db.UnsignedTinyInt
   createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt    DateTime?      @map("updated_at") @db.Timestamp(0)
   deletedAt    DateTime?      @map("deleted_at") @db.Timestamp(0)
