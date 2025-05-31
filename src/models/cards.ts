@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { CardPayloadDTO, FindManyResponse } from "../interfaces/cards";
+import { CardPayloadDTO, FindManyQuery, FindManyResponse, UpdateCardDTO } from "../interfaces/cards";
 
 export class CardsModel {
   prisma = new PrismaClient();
@@ -12,8 +12,15 @@ export class CardsModel {
     return await this.prisma.cards.create({ data: card }); 
   }
 
-  public async findMany(): Promise<FindManyResponse[]> { 
-    return await this.prisma.cards.findMany({ 
+  public async update({id, ...card}: UpdateCardDTO) { 
+    return await this.prisma.cards.update({ 
+      where: { id }, 
+      data: card
+    }); 
+  }
+
+  public async findMany({month}: FindManyQuery): Promise<FindManyResponse[]> { 
+    const cardList = await this.prisma.cards.findMany({ 
       where: {
         deletedAt: null
       },
@@ -24,6 +31,10 @@ export class CardsModel {
         closingDay: true,
         dueDay: true,
       }
-    }); 
+    });
+
+    // Buscar registros
+    console.log(month)
+    return cardList
   }
 }

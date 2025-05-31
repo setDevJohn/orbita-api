@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { errorHandler } from "../helpers/errorHandler";
 import { ResponseHandler } from "../helpers/responseHandler";
 import { CardsModel } from "../models/cards";
+import { FindManyQuery } from "../interfaces/cards";
 
 export class CardsController {
   private cardsModel: CardsModel;
@@ -31,10 +32,38 @@ export class CardsController {
       return errorHandler(err as Error, res)
     }
   }
+
+  public async update (req: Request, res: Response) {
+    try {
+      const payload = {
+        id: req.body.id,
+        name: req.body.name,
+        creditLimit: req.body.creditLimit,
+        closingDay: req.body.closingDay,
+        dueDay: req.body.dueDay
+      }
+
+      const response = await this.cardsModel.update(payload);
+
+      return new ResponseHandler().success(
+        res,
+        201,
+        response,
+        'Cartão criado com sucesso'
+      );
+    } catch (err) {
+      return errorHandler(err as Error, res)
+    }
+  }
   
   public async findMany (req: Request, res: Response) {
     try {
-      const response = await this.cardsModel.findMany();
+
+      const findManyQuery: FindManyQuery = {
+        month: String(req.query.month ?? new Date().getMonth() + 1)
+      }
+
+      const response = await this.cardsModel.findMany(findManyQuery);
 
       return new ResponseHandler().success(
         res,

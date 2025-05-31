@@ -12,5 +12,13 @@ interface CardBase {
 // Payload to create on model
 export type CardPayloadDTO = Omit<CardBase, 'id'>
 
+// Payload to update on model
+export type UpdateCardDTO = CardBase
+
+// FindMany query
+export interface FindManyQuery {
+  month: string
+}
+
 // FindMany Response
 export type FindManyResponse = CardBase
