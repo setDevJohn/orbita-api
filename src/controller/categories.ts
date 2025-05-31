@@ -12,7 +12,8 @@ export class CategoriesController {
 
   public async create (req: Request, res: Response) {
     try {
-      const response = await this.categoriesModel.create(req.body);
+      const { name } = req.body
+      const response = await this.categoriesModel.create({name});
 
       return new ResponseHandler().success(
         res,
