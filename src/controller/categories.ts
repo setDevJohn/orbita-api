@@ -57,4 +57,21 @@ export class CategoriesController {
       return errorHandler(err as Error, res)
     }
   }
+
+  public async remove (req: Request, res: Response) {
+    try {
+      const { categoryId } = req.params
+
+      await this.categoriesModel.remove(+categoryId);
+
+      return new ResponseHandler().success(
+        res,
+        200,
+        null,
+        'Categoria removida com sucesso'
+      );
+    } catch (err) {
+      return errorHandler(err as Error, res)
+    }
+  }
 }

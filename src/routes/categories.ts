@@ -17,4 +17,8 @@ categoriesRoutes.get('/', async (req, res) => {
   await categoriesController.findMany(req, res);
 });
 
+categoriesRoutes.delete('/:categoryId', async (req, res) => {
+  await categoriesController.remove(req, res);
+});
+
 export {categoriesRoutes}  

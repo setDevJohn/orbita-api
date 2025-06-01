@@ -30,4 +30,10 @@ export class CategoriesModel {
       }
     }); 
   }
+
+  public async remove(id: number) { 
+    await this.prisma.categories.delete({ 
+      where: { id }
+    }); 
+  }
 }
