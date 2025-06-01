@@ -1,5 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-import { IFindManyAccountsResponse } from "../interfaces/accounts";
 
 export class AccountsModel {
   prisma = new PrismaClient();
@@ -12,7 +11,7 @@ export class AccountsModel {
     return await this.prisma.accounts.create({ data: card }); 
   }
 
-  public async findMany(): Promise<IFindManyAccountsResponse[]> { 
+  public async findMany() { 
     return await this.prisma.accounts.findMany({ 
       where: {
         deletedAt: null
