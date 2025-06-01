@@ -4,7 +4,8 @@ import cors from 'cors';
 import morgan from 'morgan';
 
 const allowedOrigins = [
-  process.env.WHITELIST1 as string
+  process.env.WHITELIST1 as string, 
+  process.env.WHITELIST2 as string
 ]
 
 export class App {
