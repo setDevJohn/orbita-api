@@ -20,5 +20,11 @@ export interface FindManyQuery {
   month: string
 }
 
+export interface CardParamsDTO {
+  id?: number
+  name?: string
+  excludeId?: number
+}
+
 // FindMany Response
 export type FindManyResponse = CardBase
