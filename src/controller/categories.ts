@@ -26,6 +26,23 @@ export class CategoriesController {
     }
   }
 
+
+  public async update (req: Request, res: Response) {
+    try {
+      const { id, name } = req.body
+      const response = await this.categoriesModel.update({id, name});
+
+      return new ResponseHandler().success(
+        res,
+        201,
+        response,
+        'Categoria atualizada com sucesso'
+      );
+    } catch (err) {
+      return errorHandler(err as Error, res)
+    }
+  }
+
   public async findMany (req: Request, res: Response) {
     try {
       const response = await this.categoriesModel.findMany();

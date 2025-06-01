@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { CategoryFormPayloadDTO, FindManyCategoryListResponse } from "../interfaces/categories";
+import { CategoryFormPayloadDTO, FindManyCategoryListResponse, UpdateCategoryPayloadDTO } from "../interfaces/categories";
 
 export class CategoriesModel {
   prisma = new PrismaClient();
@@ -8,8 +8,15 @@ export class CategoriesModel {
     this.prisma = new PrismaClient(); 
   }
 
-  public async create(card: CategoryFormPayloadDTO) { 
-    return await this.prisma.categories.create({ data: card }); 
+  public async create(category: CategoryFormPayloadDTO) { 
+    return await this.prisma.categories.create({ data: category }); 
+  }
+
+  public async update({id, ...category}: UpdateCategoryPayloadDTO) { 
+    return await this.prisma.categories.update({ 
+      where: { id },
+      data: category
+    }); 
   }
 
   public async findMany(): Promise<FindManyCategoryListResponse> { 

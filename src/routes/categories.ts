@@ -9,6 +9,10 @@ categoriesRoutes.post('/', async (req, res) => {
   await categoriesController.create(req, res);
 });
 
+categoriesRoutes.patch('/', async (req, res) => {
+  await categoriesController.update(req, res);
+});
+
 categoriesRoutes.get('/', async (req, res) => {
   await categoriesController.findMany(req, res);
 });
