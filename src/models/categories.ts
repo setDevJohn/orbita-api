@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { CategoryFormPayloadDTO, FindManyCategoryListResponse, UpdateCategoryPayloadDTO } from "../interfaces/categories";
+import { CategoryFormPayloadDTO, FindManyCategoryListResponse, FindOneParamsDTO, UpdateCategoryPayloadDTO } from "../interfaces/categories";
 
 export class CategoriesModel {
   prisma = new PrismaClient();
@@ -29,6 +29,20 @@ export class CategoriesModel {
         name: true,
       }
     }); 
+  }
+
+  public async findOne({id, name, excludeId}: FindOneParamsDTO) {
+    return await this.prisma.categories.findFirst({
+      where: {
+        ...(id && { id }),
+        ...(name && { name }),    
+        ...(excludeId && { NOT: {id : excludeId } }),
+      },
+      select: {
+        id: true,
+        name: true
+      }
+    });   
   }
 
   public async remove(id: number) { 
