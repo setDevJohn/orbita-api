@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { TransactionPayloadForm } from "../interfaces/transactions";
 
 export class TransactionsModel {
   prisma = new PrismaClient();
@@ -7,7 +8,9 @@ export class TransactionsModel {
     this.prisma = new PrismaClient(); 
   }
 
-  public async create(card: any) { 
-    return await this.prisma.transactions.create({ data: card }); 
+  public async createMany(payloadList: TransactionPayloadForm[]) { 
+    return await this.prisma.transactions.createMany({
+      data: payloadList
+    }); 
   }
 }
