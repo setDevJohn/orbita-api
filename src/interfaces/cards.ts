@@ -1,7 +1,7 @@
 import { Decimal } from "@prisma/client/runtime/library";
 
 // Card Base
-interface CardBase {
+export interface CardBase {
   id: number;
   name: string;
   creditLimit: Decimal | null;
