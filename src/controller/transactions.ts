@@ -4,17 +4,45 @@ import { ResponseHandler } from "../helpers/responseHandler";
 import { TransactionsModel } from "../models/transactions";
 import { generateCustomDateRange } from "../helpers/generateCustomDateRange";
 import { TransactionBase } from "../interfaces/transactions";
+import { CardsModel } from "../models/cards";
+import dayjs from "dayjs";
+import { CardBase } from "../interfaces/cards";
 
 export class TransactionsController {
   private transactionsModel: TransactionsModel;
+  private cardsModel: CardsModel;
 
   public constructor () {
     this.transactionsModel = new TransactionsModel();
+    this.cardsModel = new CardsModel();
   }
 
   public async create (req: Request, res: Response) {
     try {
       const data = req.body
+
+      let card: CardBase | null = null
+
+      if (data.source === 'card') {
+        card = await this.cardsModel.findOne({
+          id: data.cardId
+        })
+      }
+
+      const currentDay = dayjs(data.transactionDate).date()
+      const closingDay = card?.closingDay || 0
+
+      function calculateReference(date: string | Date, closingDay: number, currentDay: number) {
+        const dt = dayjs(date)
+        const monthsToAdd = currentDay > closingDay ? 1 : 0
+        const refDate = dt.add(monthsToAdd, 'month')
+        return {
+          referenceMonth: refDate.month() + 1,
+          referenceYear: refDate.year()
+        }
+      }
+
+      const baseReference = calculateReference(data.transactionDate, closingDay, currentDay)
 
       const payloadBase = {
         name: data.name,
@@ -23,8 +51,8 @@ export class TransactionsController {
         transactionDate: new Date(data.transactionDate),
         source: data.source,
         categoryId: data.categoryId,
-        referenceMonth: new Date(data.transactionDate).getMonth() + 1,
-        referenceYear: new Date(data.transactionDate).getFullYear(),
+        referenceMonth: baseReference.referenceMonth,
+        referenceYear: baseReference.referenceYear,
         currenInstallment: null,
         totalInstallments: null,
         accountId: data.accountId ?? null,
@@ -33,37 +61,34 @@ export class TransactionsController {
 
       let payload: TransactionBase[] = [payloadBase]
 
-      if (data.source === 'card') {
-        // verificar se a data de fechamento ja passou
-      }
-
       if (data.transferAccountId) {
-        // transferencia de uma conta para a outra
+        // transferência de uma conta para a outra
       }
 
       const isRecurrence = !!data.recurrenceDateRange?.length
 
       if (isRecurrence) {
         const range: [string, string] = data.recurrenceDateRange
-        const baseDate =  data.transactionDate  
+        const baseDate = data.transactionDate
         const recurrenceType = data.recurrenceDateType as keyof typeof generateCustomDateRange
 
-        const dateList = generateCustomDateRange[recurrenceType]({range, baseDate})
+        const dateList = generateCustomDateRange[recurrenceType]({ range, baseDate })
 
         payload = dateList.map((date, index) => {
-          // verificar se a data de fechamento ja passou
+          const currentDay = dayjs(date).date()
+          const reference = calculateReference(date, closingDay, currentDay)
 
           return {
             ...payloadBase,
             transactionDate: new Date(date),
-            referenceMonth: new Date(date).getMonth() + 1,
-            referenceYear: new Date(date).getFullYear(),
+            referenceMonth: reference.referenceMonth,
+            referenceYear: reference.referenceYear,
             currenInstallment: index + 1,
             totalInstallments: dateList.length,
           }
         })
       }
-      
+
       await this.transactionsModel.createMany(payload);
 
       return new ResponseHandler().success(

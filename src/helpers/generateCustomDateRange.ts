@@ -46,7 +46,7 @@ function week({range}: DateRangeProps): string[] {
   return dates
 }
 
-function mounth({ range, baseDate }: DateRangeProps) {
+function month({ range, baseDate }: DateRangeProps) {
   const [startStr, endStr] = range
   const base = dayjs(baseDate)
   const baseDay = base.date()
@@ -77,7 +77,7 @@ function year({ range, baseDate }: DateRangeProps) {
   const [startStr, endStr] = range
   const base = dayjs(baseDate)
   const baseDay = base.date()
-  const baseMonth = base.month() // 0 = Janeiro, 11 = Dezembro
+  const baseMonth = base.month()
 
   const safeDate = (date: dayjs.Dayjs, month: number, day: number) => {
     const withMonth = date.month(month)
@@ -105,6 +105,6 @@ function year({ range, baseDate }: DateRangeProps) {
 export const generateCustomDateRange = {
   day,
   week,
-  mounth,
+  month,
   year
 }
