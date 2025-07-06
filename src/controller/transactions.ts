@@ -101,4 +101,27 @@ export class TransactionsController {
       return errorHandler(err as Error, res)
     }
   }
+
+  public async findAll(req: Request, res: Response) {
+    try {
+      const { page = '1', limit = '10', all } = req.body
+  
+      const query = {
+        offset: (Number(page) - 1) * Number(limit),
+        limit: Number(limit),
+        all: all === 'true'
+      }
+
+      const transactions = await this.transactionsModel.findAll(query)
+
+      return new ResponseHandler().success(
+        res,
+        200,
+        transactions,
+        'Transações listadas com sucesso'
+      )
+    } catch (err) {
+      return errorHandler(err as Error, res)
+    }
+  }
 }
