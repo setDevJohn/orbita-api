@@ -104,12 +104,13 @@ export class TransactionsController {
 
   public async findAll(req: Request, res: Response) {
     try {
-      const { page = '1', limit = '10', all } = req.body
+      const { page = '1', limit = '10', all, month } = req.query
   
       const query = {
         offset: (Number(page) - 1) * Number(limit),
         limit: Number(limit),
-        all: all === 'true'
+        all: all === 'true',
+        ...(month && !Number.isNaN(+month) && { month: +month }),
       }
 
       const transactions = await this.transactionsModel.findAll(query)

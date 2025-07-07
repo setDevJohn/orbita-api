@@ -51,4 +51,5 @@ export interface FindAllQueryParams {
   limit: number,
   offset: number,
   all: boolean
+  month?: number
 }

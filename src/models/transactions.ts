@@ -14,10 +14,17 @@ export class TransactionsModel {
     }); 
   }
 
-  public async findAll({limit, offset, all} :FindAllQueryParams): Promise<TransactionListResponse> {
+  public async findAll({
+    limit,
+    offset,
+    all,
+    month
+  } :FindAllQueryParams): Promise<TransactionListResponse> {
+
     return await this.prisma.transactions.findMany({
       where: {
-        deletedAt: null
+        deletedAt: null,
+        ...(month && { referenceMonth: month })
       },
       select: {
         id: true,
@@ -52,6 +59,9 @@ export class TransactionsModel {
             dueDay: true,
           }
         }
+      },
+      orderBy: {
+        transactionDate: 'desc'
       },
       ...(!all && {
         take: limit,
