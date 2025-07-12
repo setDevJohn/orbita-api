@@ -30,12 +30,17 @@ export class TransactionsController {
       }
 
       const currentDay = dayjs(data.transactionDate).date()
-      const closingDay = card?.closingDay || 0
+      const closingDay = data.source === 'card' ? (card?.closingDay || 0) : Infinity
 
-      function calculateReference(date: string | Date, closingDay: number, currentDay: number) {
+      const calculateReference = (
+        date: string | Date,
+        closingDay: number,
+        currentDay: number
+      ) => {
         const dt = dayjs(date)
         const monthsToAdd = currentDay > closingDay ? 1 : 0
         const refDate = dt.add(monthsToAdd, 'month')
+
         return {
           referenceMonth: refDate.month() + 1,
           referenceYear: refDate.year()
