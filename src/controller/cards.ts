@@ -69,9 +69,9 @@ export class CardsController {
 
       return new ResponseHandler().success(
         res,
-        201,
+        200,
         response,
-        'Cartão criado com sucesso'
+        'Cartão atualizado com sucesso'
       );
     } catch (err) {
       return errorHandler(err as Error, res)
@@ -92,7 +92,7 @@ export class CardsController {
 
       return new ResponseHandler().success(
         res,
-        201,
+        200,
         null,
         'Cartão removido com sucesso'
       );

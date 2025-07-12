@@ -59,7 +59,7 @@ export class CategoriesController {
 
       return new ResponseHandler().success(
         res,
-        201,
+        200,
         response,
         'Categoria atualizada com sucesso'
       );
