@@ -60,7 +60,9 @@ export class AccountsMiddleware {
 
       if (!id) {
         throw new AppError('Id da conta é obrigatorio', HttpStatus.BAD_REQUEST);
-      }      
+      }
+
+      next();
     } catch (err) {
       errorHandler(err as Error, res)
     }
