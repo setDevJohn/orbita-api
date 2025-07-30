@@ -1,14 +1,8 @@
 import { Router } from "express";
-import { cardsRoutes } from "./cards";
-import { accountsRoutes } from "./accounts";
-import { categoriesRoutes } from "./categories";
-import { transactionsRoutes } from "./transactions";
+import { v1routes } from "./v1routes";
 
 const routes = Router()
 
-routes.use('/cards', cardsRoutes)
-routes.use('/accounts', accountsRoutes)
-routes.use('/categories', categoriesRoutes)
-routes.use('/transactions', transactionsRoutes)
+routes.use('/v1', v1routes)
 
-export {routes};
+export { routes };

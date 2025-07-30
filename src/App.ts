@@ -1,7 +1,7 @@
 import express, { Application } from 'express';
-import { routes } from './routes';
 import cors from 'cors';
 import morgan from 'morgan';
+import { routes } from './routes';
 
 const allowedOrigins = [
   process.env.WHITELIST1 as string, 
