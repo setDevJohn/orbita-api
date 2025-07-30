@@ -7,6 +7,7 @@ import { TransactionBase } from "../interfaces/transactions";
 import { CardsModel } from "../models/cards";
 import dayjs from "dayjs";
 import { CardBase } from "../interfaces/cards";
+import { Decimal } from "@prisma/client/runtime/library";
 
 export class TransactionsController {
   private transactionsModel: TransactionsModel;
@@ -109,21 +110,39 @@ export class TransactionsController {
 
   public async findAll(req: Request, res: Response) {
     try {
-      const { page = '1', limit = '10', all, month } = req.query
+      const { 
+        page = '1',
+        limit = '10',
+        all,
+        month,
+        extract,
+        projection
+      } = req.query
+
   
       const query = {
         offset: (Number(page) - 1) * Number(limit),
         limit: Number(limit),
         all: all === 'true',
         ...(month && !Number.isNaN(+month) && { month: +month }),
+        ...(extract === 'true' && { extract: true }),
+        ...(projection === 'true' && { projection: true }),
       }
 
       const transactions = await this.transactionsModel.findAll(query)
+      
+      const formattedTransactions = {
+        ...transactions,
+        valuesByType: transactions.valuesByType.reduce((acc, cur) => {
+          acc[cur.type] = (acc[cur.type] || new Decimal(0)).add(cur.amount)
+          return acc
+        }, {} as Record<string, Decimal>)
+      }
 
       return new ResponseHandler().success(
         res,
         200,
-        transactions,
+        formattedTransactions,
         'Transações listadas com sucesso'
       )
     } catch (err) {

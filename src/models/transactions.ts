@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { FindAllQueryParams, TransactionListResponse, TransactionPayloadForm } from "../interfaces/transactions";
+import { FindAllQueryParams, TransactionListResponse, TransactionPayloadForm, TransactionValuesByType } from "../interfaces/transactions";
 
 export class TransactionsModel {
   prisma = new PrismaClient();
@@ -18,13 +18,24 @@ export class TransactionsModel {
     limit,
     offset,
     all,
-    month
-  } :FindAllQueryParams): Promise<TransactionListResponse> {
+    month,
+    extract,
+    projection
+  } :FindAllQueryParams): Promise<{ 
+    transactions: TransactionListResponse,
+    valuesByType: TransactionValuesByType
+  }> {
+    const today = new Date();
 
-    return await this.prisma.transactions.findMany({
+    const dateFilter = extract 
+      ? { lte: today } : projection 
+        ? { gt: today } : undefined;
+
+    const transactions = await this.prisma.transactions.findMany({
       where: {
         deletedAt: null,
-        ...(month && { referenceMonth: month })
+        ...(month && { referenceMonth: month }),
+        ...(dateFilter && { transactionDate: dateFilter }),
       },
       select: {
         id: true,
@@ -67,6 +78,22 @@ export class TransactionsModel {
         take: limit,
         skip: offset
       })
-    })
+    });
+
+    const valuesByType = await this.prisma.transactions.findMany({
+      where: {
+        deletedAt: null,
+        ...(month && { referenceMonth: month }),
+        ...(dateFilter && { transactionDate: dateFilter }),
+      },
+      select: {
+        type: true,
+        amount: true,
+      },
+    });
+
+
+
+    return { transactions, valuesByType }
   }
 }
