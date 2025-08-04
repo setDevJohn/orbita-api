@@ -49,7 +49,7 @@ export class TransactionsModel {
     const orderClause: Record<
       'home' | 'extract' | 'projection', Record<string, string>
     > = {
-      home: { createAt: 'desc' },
+      home: { createdAt: 'desc' },
       extract: { transactionDate: 'desc' },
       projection: { transactionDate: 'asc' }
     }
