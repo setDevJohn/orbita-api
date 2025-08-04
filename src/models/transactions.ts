@@ -46,6 +46,14 @@ export class TransactionsModel {
       ? { lte: today } : projection 
         ? { gt: today } : undefined;
 
+    const orderClause: Record<
+      'home' | 'extract' | 'projection', Record<string, string>
+    > = {
+      home: { createAt: 'desc' },
+      extract: { transactionDate: 'desc' },
+      projection: { transactionDate: 'asc' }
+    }
+
     const transactions = await this.prisma.transactions.findMany({
       where: {
         deletedAt: null,
@@ -94,7 +102,10 @@ export class TransactionsModel {
         }
       },
       orderBy: {
-        transactionDate: 'desc'
+        ...(orderClause[extract 
+          ? 'extract' : projection 
+            ? 'projection' : 'home'
+        ])
       },
       ...(!all && {
         take: limit,
