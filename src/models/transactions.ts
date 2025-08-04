@@ -34,8 +34,14 @@ export class TransactionsModel {
     transactions: TransactionListResponse,
     valuesByType: TransactionValuesByType
   }> {
+    const customDate = date 
+      ? {
+        gte: DateTime.fromISO(date).startOf('day').toJSDate(),
+        lte: DateTime.fromISO(date).endOf('day').toJSDate()
+      } : undefined
+      
     const today = DateTime.now().setZone("America/Sao_Paulo").toString();
-    
+
     const dateFilter = extract 
       ? { lte: today } : projection 
         ? { gt: today } : undefined;
@@ -45,16 +51,9 @@ export class TransactionsModel {
         deletedAt: null,
         ...(type && { type }),
         ...(month && { referenceMonth: month }),
-        ...(date
-          ? {
-              transactionDate: {
-                gte: DateTime.fromISO(date).startOf('day').toJSDate(),
-                lte: DateTime.fromISO(date).endOf('day').toJSDate()
-              }
-            }
-          : dateFilter
-            ? { transactionDate: dateFilter }
-            : {}),
+        ...(customDate || dateFilter && { 
+          transactionDate: customDate || dateFilter 
+        }),
         ...(description && { OR: [
           { name: { contains: description } },
           { categories: { name: { contains: description } }},
@@ -107,16 +106,9 @@ export class TransactionsModel {
       where: {
        deletedAt: null,
         ...(month && { referenceMonth: month }),
-        ...(date
-          ? {
-              transactionDate: {
-                gte: DateTime.fromISO(date).startOf('day').toJSDate(),
-                lte: DateTime.fromISO(date).endOf('day').toJSDate()
-              }
-            }
-          : dateFilter
-            ? { transactionDate: dateFilter }
-            : {}),
+        ...(customDate || dateFilter && { 
+          transactionDate: customDate || dateFilter 
+        }),
         ...(description && { OR: [
           { name: { contains: description } },
           { categories: { name: { contains: description } }},
