@@ -8,6 +8,7 @@ import { CardsModel } from "../models/cards";
 import dayjs from "dayjs";
 import { CardBase } from "../interfaces/cards";
 import { Decimal } from "@prisma/client/runtime/library";
+import { $Enums } from "@prisma/client";
 
 export class TransactionsController {
   private transactionsModel: TransactionsModel;
@@ -116,17 +117,24 @@ export class TransactionsController {
         all,
         month,
         extract,
-        projection
+        projection,
+        type,
+        description,
+        date,
       } = req.query
-
   
       const query = {
         offset: (Number(page) - 1) * Number(limit),
         limit: Number(limit),
         all: all === 'true',
+        ...(type && $Enums.transactions_type[type as $Enums.transactions_type] && { 
+          type: type as $Enums.transactions_type
+        }),
         ...(month && !Number.isNaN(+month) && { month: +month }),
         ...(extract === 'true' && { extract: true }),
         ...(projection === 'true' && { projection: true }),
+        ...(description && { description: String(description) }),
+        ...(date && { date: date as string }),
       }
 
       const transactions = await this.transactionsModel.findAll(query)

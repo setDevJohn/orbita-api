@@ -1,5 +1,11 @@
 import { PrismaClient } from "@prisma/client";
-import { FindAllQueryParams, TransactionListResponse, TransactionPayloadForm, TransactionValuesByType } from "../interfaces/transactions";
+import { DateTime } from "luxon";
+import { 
+  FindAllQueryParams,
+  TransactionListResponse,
+  TransactionPayloadForm,
+  TransactionValuesByType
+} from "../interfaces/transactions";
 
 export class TransactionsModel {
   prisma = new PrismaClient();
@@ -18,15 +24,18 @@ export class TransactionsModel {
     limit,
     offset,
     all,
+    type,
     month,
     extract,
-    projection
+    projection,
+    description,
+    date,
   } :FindAllQueryParams): Promise<{ 
     transactions: TransactionListResponse,
     valuesByType: TransactionValuesByType
   }> {
-    const today = new Date();
-
+    const today = DateTime.now().setZone("America/Sao_Paulo").toString();
+    
     const dateFilter = extract 
       ? { lte: today } : projection 
         ? { gt: today } : undefined;
@@ -34,8 +43,22 @@ export class TransactionsModel {
     const transactions = await this.prisma.transactions.findMany({
       where: {
         deletedAt: null,
+        ...(type && { type }),
         ...(month && { referenceMonth: month }),
-        ...(dateFilter && { transactionDate: dateFilter }),
+        ...(date
+          ? {
+              transactionDate: {
+                gte: DateTime.fromISO(date).startOf('day').toJSDate(),
+                lte: DateTime.fromISO(date).endOf('day').toJSDate()
+              }
+            }
+          : dateFilter
+            ? { transactionDate: dateFilter }
+            : {}),
+        ...(description && { OR: [
+          { name: { contains: description } },
+          { categories: { name: { contains: description } }},
+        ]}),
       },
       select: {
         id: true,
@@ -82,17 +105,28 @@ export class TransactionsModel {
 
     const valuesByType = await this.prisma.transactions.findMany({
       where: {
-        deletedAt: null,
+       deletedAt: null,
         ...(month && { referenceMonth: month }),
-        ...(dateFilter && { transactionDate: dateFilter }),
+        ...(date
+          ? {
+              transactionDate: {
+                gte: DateTime.fromISO(date).startOf('day').toJSDate(),
+                lte: DateTime.fromISO(date).endOf('day').toJSDate()
+              }
+            }
+          : dateFilter
+            ? { transactionDate: dateFilter }
+            : {}),
+        ...(description && { OR: [
+          { name: { contains: description } },
+          { categories: { name: { contains: description } }},
+        ]}),
       },
       select: {
         type: true,
         amount: true,
       },
     });
-
-
 
     return { transactions, valuesByType }
   }
