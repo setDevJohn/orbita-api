@@ -5,7 +5,6 @@ import { UsersModel } from "../models/users";
 import { AppError, HttpStatus } from "../helpers/appError";
 import bcrypt from 'bcrypt'
 
-
 export class UsersController {
   private usersModel: UsersModel;
 
@@ -52,6 +51,8 @@ export class UsersController {
 
       const userExiting = await this.usersModel.findOne({ email })
 
+      // TODO: Verificar se tem 8 tentativas erradas e retornar um aviso para redefinição de senha
+
       if (!userExiting) {
         throw new AppError(
           'Usuário ou senha inválida!',
@@ -65,12 +66,15 @@ export class UsersController {
       )
 
       if (!isPasswordValid) {
+        // TODO: Atualizar failedAttempts
+
         throw new AppError(
           'Usuário ou senha inválida!',
           HttpStatus.UNAUTHORIZED
         )
       }
 
+      // TODO: Atualizar data de login e failedAttempts para 0
       return new ResponseHandler().success(
         res,
         200,
