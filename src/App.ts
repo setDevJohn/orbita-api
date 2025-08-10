@@ -2,6 +2,7 @@ import express, { Application } from 'express';
 import { routes } from './routes';
 import cors from 'cors';
 import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
 
 const allowedOrigins = [
   process.env.WHITELIST1 as string, 
@@ -36,6 +37,9 @@ export class App {
     }));
     this.app.use(morgan('dev'));
     this.app.use(express.json());
+
+    this.app.use(cookieParser());
+
     this.app.use(routes);
   }
 
