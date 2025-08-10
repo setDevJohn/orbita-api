@@ -81,13 +81,15 @@ export class UsersController {
         verified: userExisting.verified ?? false,
       };
 
-      const token = generateToken(tokenData);
+      const token = generateToken(tokenData, stayConect);
 
       res.cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
-        maxAge: 60 * 60 * 1000 // 1 hora
+        maxAge: stayConect
+          ? 30 * 24 * 60 * 60 * 1000 // 30 dias
+          : 2 * 60 * 60 * 1000       // 2 horas
       });
 
       // TODO: Atualizar data de login e failedAttempts para 0

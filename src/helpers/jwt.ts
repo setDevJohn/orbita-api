@@ -8,7 +8,7 @@ interface ITokenData {
   verified: boolean;
 }
 
-export function generateToken(user: ITokenData): string {
+export function generateToken(user: ITokenData, stayConect: boolean): string {
   const SECRET_KEY = process.env.JWT_SECRET;
 
   if (!SECRET_KEY) {
@@ -17,7 +17,7 @@ export function generateToken(user: ITokenData): string {
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   } 
-  return jwt.sign(user, SECRET_KEY, { expiresIn: "1h" });
+  return jwt.sign(user, SECRET_KEY, { expiresIn: stayConect ? '30d' : '2h' });
 }
 
 export function verifyToken(token: string): any {
