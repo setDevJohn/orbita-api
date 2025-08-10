@@ -22,4 +22,16 @@ usersRoutes.post('/',
   }
 )
 
+usersRoutes.get('/verify', 
+  async (req, res) => {
+    await usersController.verify(req, res);
+  }
+)
+
+usersRoutes.post('/logout',
+  async (req, res) => {
+    await usersController.logout(req, res);
+  }
+)
+
 export { usersRoutes }  
