@@ -49,8 +49,8 @@ export class UsersMiddleware {
         throw new AppError('Senha deve ser uma string', HttpStatus.BAD_REQUEST)
       }
 
-      if (password.length < 8) {
-        throw new AppError('Senha deve ter no mínimo 8 caracteres', HttpStatus.BAD_REQUEST)
+      if (password.length < 6) {
+        throw new AppError('Senha deve ter no mínimo 6 caracteres', HttpStatus.BAD_REQUEST)
       }
       
       req.body = { 
