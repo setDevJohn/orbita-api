@@ -4,6 +4,7 @@ import { ResponseHandler } from "../helpers/responseHandler";
 import { UsersModel } from "../models/users";
 import { AppError, HttpStatus } from "../helpers/appError";
 import bcrypt from 'bcrypt'
+import { generateToken, verifyToken } from "../helpers/jwt";
 
 export class UsersController {
   private usersModel: UsersModel;
@@ -28,7 +29,7 @@ export class UsersController {
       const SALT_ROUNDS = 10
       const passHashed = await bcrypt.hash(password, SALT_ROUNDS)
 
-      const response = await this.usersModel.create({
+      const user = await this.usersModel.create({
         name,
         email,
         password: passHashed,
@@ -37,7 +38,7 @@ export class UsersController {
       return new ResponseHandler().success(
         res,
         200,
-        response,
+        { id: user.id, email: user.email },
         'Usuário criado com sucesso'
       );
     } catch (err) {
@@ -49,11 +50,11 @@ export class UsersController {
     try {
       const { email, password, stayConect } = req.body
 
-      const userExiting = await this.usersModel.findOne({ email })
+      const userExisting = await this.usersModel.findOne({ email })
 
       // TODO: Verificar se tem 8 tentativas erradas e retornar um aviso para redefinição de senha
 
-      if (!userExiting) {
+      if (!userExisting) {
         throw new AppError(
           'Usuário ou senha inválida!',
           HttpStatus.UNAUTHORIZED
@@ -62,7 +63,7 @@ export class UsersController {
 
       const isPasswordValid = await bcrypt.compare(
         password,
-        userExiting.password
+        userExisting.password
       )
 
       if (!isPasswordValid) {
@@ -73,16 +74,66 @@ export class UsersController {
           HttpStatus.UNAUTHORIZED
         )
       }
+      
+      const tokenData = {
+        id: userExisting.id,
+        email: userExisting.email,
+        verified: userExisting.verified ?? false,
+      };
+
+      const token = generateToken(tokenData);
+
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 60 * 60 * 1000 // 1 hora
+      });
 
       // TODO: Atualizar data de login e failedAttempts para 0
       return new ResponseHandler().success(
         res,
         200,
-        userExiting,
+        null,
         'Usuário autenticado com sucesso!'
       );
     } catch (err) {
       return errorHandler(err as Error, res)
     }
+  }
+
+  public async verify (req: Request, res: Response) {
+    try {
+      const token = req.cookies?.token;
+
+      if (!token) {
+        throw new AppError("Não autenticado", HttpStatus.UNAUTHORIZED);
+      }
+      const decoded = verifyToken(token);
+
+      return new ResponseHandler().success(
+        res,
+        200,
+        decoded,
+        'Usuário verificado com sucesso!'
+      );
+    } catch (err) {
+      return errorHandler(err as Error, res);
+    }
+  }
+
+  public async logout(req: Request, res: Response) {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict"
+    });
+
+    return new ResponseHandler().success(
+      res,  
+      200,
+      null,
+      'Logout realizado com sucesso!'
+    );
   }
 }
