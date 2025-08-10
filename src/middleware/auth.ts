@@ -11,7 +11,7 @@ export class AuthMiddleware {
       const token = req.cookies?.token
 
       if (!token) {
-        throw new AppError("Token não fornecido.", HttpStatus.UNAUTHORIZED);
+        throw new AppError("Usuário não autenticado.", HttpStatus.UNAUTHORIZED);
       }
 
       const decoded = verifyToken(token);
