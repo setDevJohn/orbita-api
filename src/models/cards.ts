@@ -40,7 +40,7 @@ export class CardsModel {
       }
     });
 
-    // Buscar registros
+    // TODO: Calcular limite restante do cartão
     console.log(month)
     return cardList
   }
