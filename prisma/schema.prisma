@@ -64,6 +64,23 @@ model transactions {
   @@index([categoryId], map: "category_id")
 }
 
+model users {
+  id                       Int       @id @default(autoincrement())
+  name                     String    @db.VarChar(100)
+  email                    String    @unique(map: "email") @db.VarChar(100)
+  password                 String    @db.VarChar(255)
+  active                   Boolean   @default(true)
+  verified                 Boolean?  @default(false)
+  failedAttempts           Int?      @default(0) @map("failed_attempts")
+  passwordResetToken       String?   @map("password_reset_token") @db.VarChar(255)
+  accountVerificationToken String?   @map("account_verification_token") @db.VarChar(255)
+  lockedUntil              DateTime? @map("locked_until") @db.Timestamp(0)
+  lastLogin                DateTime? @map("last_login") @db.Timestamp(0)
+  deletedAt                DateTime? @map("deleted_at") @db.Timestamp(0)
+  createdAt                DateTime? @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt                DateTime? @map("updated_at") @db.Timestamp(0)
+}
+
 enum transactions_type {
   income
   expense

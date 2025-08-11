@@ -1,6 +1,7 @@
 import express, { Application } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
 import { routes } from './routes';
 
 const allowedOrigins = [
@@ -36,6 +37,9 @@ export class App {
     }));
     this.app.use(morgan('dev'));
     this.app.use(express.json());
+
+    this.app.use(cookieParser());
+
     this.app.use(routes);
   }
 
