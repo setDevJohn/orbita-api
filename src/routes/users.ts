@@ -4,9 +4,8 @@ import { UsersMiddleware } from '../middleware/users';
 
 const usersRoutes = Router();
 
-const usersController = new UsersController();
 const usersMiddleware = new UsersMiddleware();
-// const accountsMiddleware = new AccountsMiddleware();
+const usersController = new UsersController();
 
 usersRoutes.post('/auth', 
   usersMiddleware.auth,
