@@ -1,5 +1,11 @@
 import { PrismaClient } from "@prisma/client";
-import { FindAllQueryParams, TransactionListResponse, TransactionPayloadForm } from "../interfaces/transactions";
+import { DateTime } from "luxon";
+import { 
+  FindAllQueryParams,
+  TransactionListResponse,
+  TransactionPayloadForm,
+  TransactionValuesByType
+} from "../interfaces/transactions";
 
 export class TransactionsModel {
   prisma = new PrismaClient();
@@ -18,13 +24,48 @@ export class TransactionsModel {
     limit,
     offset,
     all,
-    month
-  } :FindAllQueryParams): Promise<TransactionListResponse> {
+    type,
+    month,
+    extract,
+    projection,
+    description,
+    date,
+  } :FindAllQueryParams): Promise<{ 
+    transactions: TransactionListResponse,
+    valuesByType: TransactionValuesByType
+  }> {
+    const customDate = date 
+      ? {
+        gte: DateTime.fromISO(date).startOf('day').toJSDate(),
+        lte: DateTime.fromISO(date).endOf('day').toJSDate()
+      } : undefined
+      
+    const today = DateTime.now().setZone("America/Sao_Paulo").toString();
 
-    return await this.prisma.transactions.findMany({
+    const dateFilter = extract 
+      ? { lte: today } : projection 
+        ? { gt: today } : undefined;
+
+    const orderClause: Record<
+      'home' | 'extract' | 'projection', Record<string, string>
+    > = {
+      home: { createdAt: 'desc' },
+      extract: { transactionDate: 'desc' },
+      projection: { transactionDate: 'asc' }
+    }
+
+    const transactions = await this.prisma.transactions.findMany({
       where: {
         deletedAt: null,
-        ...(month && { referenceMonth: month })
+        ...(type && { type }),
+        ...(month && { referenceMonth: month }),
+        ...(customDate || dateFilter && { 
+          transactionDate: customDate || dateFilter 
+        }),
+        ...(description && { OR: [
+          { name: { contains: description } },
+          { categories: { name: { contains: description } }},
+        ]}),
       },
       select: {
         id: true,
@@ -61,12 +102,35 @@ export class TransactionsModel {
         }
       },
       orderBy: {
-        transactionDate: 'desc'
+        ...(orderClause[extract 
+          ? 'extract' : projection 
+            ? 'projection' : 'home'
+        ])
       },
       ...(!all && {
         take: limit,
         skip: offset
       })
-    })
+    });
+
+    const valuesByType = await this.prisma.transactions.findMany({
+      where: {
+       deletedAt: null,
+        ...(month && { referenceMonth: month }),
+        ...(customDate || dateFilter && { 
+          transactionDate: customDate || dateFilter 
+        }),
+        ...(description && { OR: [
+          { name: { contains: description } },
+          { categories: { name: { contains: description } }},
+        ]}),
+      },
+      select: {
+        type: true,
+        amount: true,
+      },
+    });
+
+    return { transactions, valuesByType }
   }
 }

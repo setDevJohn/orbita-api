@@ -47,9 +47,19 @@ export type TransactionListResponse = {
   } | null
 }[]
 
+export type TransactionValuesByType = {
+  type: $Enums.transactions_type,
+  amount: Decimal,
+}[]
+
 export interface FindAllQueryParams {
   limit: number,
   offset: number,
   all: boolean
+  type?: $Enums.transactions_type
   month?: number
+  extract?: boolean
+  projection?: boolean
+  description?: string
+  date?: string
 }
