@@ -1,5 +1,5 @@
-import { AccountsController } from '../controller/accounts';
-import { AccountsMiddleware } from '../middleware/accounts';
+import { AccountsController } from '../../controller/accounts';
+import { AccountsMiddleware } from '../../middleware/accounts';
 import { Router } from "express";
 
 const accountsRoutes = Router();

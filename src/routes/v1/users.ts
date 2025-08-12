@@ -1,6 +1,6 @@
-import { UsersController } from '../controller/users';
+import { UsersController } from '../../controller/users';
 import { Router } from "express";
-import { UsersMiddleware } from '../middleware/users';
+import { UsersMiddleware } from '../../middleware/users';
 
 const usersRoutes = Router();
 
