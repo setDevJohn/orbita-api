@@ -3,6 +3,7 @@ import { errorHandler } from "../helpers/errorHandler";
 import { ResponseHandler } from "../helpers/responseHandler";
 import { CategoriesModel } from "../models/categories";
 import { AppError, HttpStatus } from "../helpers/appError";
+import { ITokenData } from "../helpers/jwt";
 
 export class CategoriesController {
   private categoriesModel: CategoriesModel;
@@ -14,15 +15,15 @@ export class CategoriesController {
   public async create (req: Request, res: Response) {
     try {
       const { name } = req.body
+      const { id: userId } = res.locals.user as ITokenData
 
-      const exitingCategory = await this.categoriesModel.findOne({ name });
+      const exitingCategory = await this.categoriesModel.findOne({ userId, name });
 
       if (exitingCategory) {
         throw new AppError('Categoria ja cadastrada', HttpStatus.BAD_REQUEST)
       }
 
-
-      const response = await this.categoriesModel.create({ name });
+      const response = await this.categoriesModel.create({ userId, name });
 
       return new ResponseHandler().success(
         res,
@@ -39,8 +40,9 @@ export class CategoriesController {
   public async update (req: Request, res: Response) {
     try {
       const { id, name } = req.body
+      const { id: userId } = res.locals.user as ITokenData
 
-      const exitingCategory = await this.categoriesModel.findOne({ id });
+      const exitingCategory = await this.categoriesModel.findOne({ userId, id });
 
       if (!exitingCategory) {
         throw new AppError('Categoria nao encontrada', HttpStatus.BAD_REQUEST)
@@ -48,14 +50,15 @@ export class CategoriesController {
 
       const exitingCategoryName = await this.categoriesModel.findOne({
         name,
-        excludeId: id
+        excludeId: id,
+        userId
       });
 
       if (exitingCategoryName) {
         throw new AppError('Categoria ja cadastrada', HttpStatus.BAD_REQUEST)
       }
  
-      const response = await this.categoriesModel.update({ id, name });
+      const response = await this.categoriesModel.update({ userId, id, name });
 
       return new ResponseHandler().success(
         res,
@@ -70,7 +73,9 @@ export class CategoriesController {
 
   public async findMany (req: Request, res: Response) {
     try {
-      const response = await this.categoriesModel.findMany();
+      const { id: userId } = res.locals.user as ITokenData
+
+      const response = await this.categoriesModel.findMany(userId);
 
       return new ResponseHandler().success(
         res,
@@ -86,14 +91,18 @@ export class CategoriesController {
   public async remove (req: Request, res: Response) {
     try {
       const { categoryId } = req.params
+      const { id: userId } = res.locals.user as ITokenData
 
-      const exitingCategory = await this.categoriesModel.findOne({ id: +categoryId });
+      const exitingCategory = await this.categoriesModel.findOne({ 
+        userId,
+        id: +categoryId 
+      });
 
       if (!exitingCategory) {
         throw new AppError('Categoria nao encontrada', HttpStatus.NOT_FOUND)
       }
 
-      await this.categoriesModel.remove(+categoryId);
+      await this.categoriesModel.remove(+categoryId, userId);
 
       return new ResponseHandler().success(
         res,

@@ -12,16 +12,17 @@ export class CategoriesModel {
     return await this.prisma.categories.create({ data: category }); 
   }
 
-  public async update({id, ...category}: UpdateCategoryPayloadDTO) { 
+  public async update({id, userId, ...category}: UpdateCategoryPayloadDTO) { 
     return await this.prisma.categories.update({ 
-      where: { id },
+      where: { id, userId },
       data: category
     }); 
   }
 
-  public async findMany(): Promise<FindManyCategoryListResponse> { 
+  public async findMany(userId: number): Promise<FindManyCategoryListResponse> { 
     return await this.prisma.categories.findMany({ 
       where: {
+        userId,
         deletedAt: null
       },
       select: {
@@ -31,9 +32,10 @@ export class CategoriesModel {
     }); 
   }
 
-  public async findOne({id, name, excludeId}: FindOneParamsDTO) {
+  public async findOne({userId, id, name, excludeId}: FindOneParamsDTO) {
     return await this.prisma.categories.findFirst({
       where: {
+        userId,
         ...(id && { id }),
         ...(name && { name }),    
         ...(excludeId && { NOT: {id : excludeId } }),
@@ -45,9 +47,9 @@ export class CategoriesModel {
     });   
   }
 
-  public async remove(id: number) { 
+  public async remove(id: number, userId: number) { 
     await this.prisma.categories.delete({ 
-      where: { id }
+      where: { id, userId }
     }); 
   }
 }
