@@ -3,6 +3,7 @@ import { errorHandler } from "../helpers/errorHandler";
 import { ResponseHandler } from "../helpers/responseHandler";
 import { AccountsModel } from "../models/accounts";
 import { AppError, HttpStatus } from "../helpers/appError";
+import { ITokenData } from "../helpers/jwt";
 
 export class AccountsController {
   private accountsModel: AccountsModel;
@@ -14,8 +15,9 @@ export class AccountsController {
   public async create (req: Request, res: Response) {
     try {
       const {  name, balance } = req.body
+      const { id: userId } = res.locals.user as ITokenData
 
-      const existingAccount = await this.accountsModel.findOne({name});
+      const existingAccount = await this.accountsModel.findOne({ userId, name });
 
       if (existingAccount) {
         throw new AppError('Conta ja cadastrada', HttpStatus.CONFLICT)
@@ -23,7 +25,8 @@ export class AccountsController {
 
       const payload = {
         name,
-        balance 
+        balance,
+        userId,
       }
 
       const response = await this.accountsModel.create(payload);
@@ -41,7 +44,9 @@ export class AccountsController {
 
   public async findMany (req: Request, res: Response) {
     try {
-      const response = await this.accountsModel.findMany();
+      const { id: userId } = res.locals.user as ITokenData
+
+      const response = await this.accountsModel.findMany(userId);
 
       return new ResponseHandler().success(
         res,
@@ -57,14 +62,16 @@ export class AccountsController {
   public async update (req: Request, res: Response) {
     try {
       const {id, name, balance } = req.body
+      const { id: userId } = res.locals.user as ITokenData
 
-      const existingAccount = await this.accountsModel.findOne({id: +id});
+      const existingAccount = await this.accountsModel.findOne({ userId, id: +id });
 
       if (!existingAccount) {
         throw new AppError('Conta nao encontrada', HttpStatus.NOT_FOUND)
       }
 
       const existingAccountName = await this.accountsModel.findOne({
+        userId,
         name,
         excludeId: id
       });
@@ -76,7 +83,8 @@ export class AccountsController {
       const payload = {
         id,
         name,
-        balance 
+        balance,
+        userId, 
       }
 
       const response = await this.accountsModel.update(payload);
@@ -95,14 +103,16 @@ export class AccountsController {
   public async remove (req: Request, res: Response) {
     try {
       const { id } = req.params
+      const { id: userId } = res.locals.user as ITokenData
 
-      const existingAccount = await this.accountsModel.findOne({id: +id});
+
+      const existingAccount = await this.accountsModel.findOne({ userId, id: +id });
 
       if (!existingAccount) {
         throw new AppError('Conta nao encontrada', HttpStatus.NOT_FOUND)
       }
 
-      const response = await this.accountsModel.remove(+id)
+      const response = await this.accountsModel.remove(+id, userId)
 
       return new ResponseHandler().success(
         res,

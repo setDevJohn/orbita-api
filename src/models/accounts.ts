@@ -9,12 +9,15 @@ export class AccountsModel {
   }
 
   public async create(card: AccountPayloadDTO) { 
-    return await this.prisma.accounts.create({ data: card }); 
+    return await this.prisma.accounts.create({ 
+      data: card,
+    }); 
   }
   
-  public async findMany() { 
+  public async findMany(userId: number) { 
     return await this.prisma.accounts.findMany({ 
       where: {
+        userId,
         deletedAt: null
       },
       select: {
@@ -25,9 +28,10 @@ export class AccountsModel {
     }); 
   }
   
-  public async findOne({id, name, excludeId}: FindOneParams) { 
+  public async findOne({userId, id, name, excludeId}: FindOneParams) { 
     return await this.prisma.accounts.findFirst({ 
       where: {
+        userId,
         deletedAt: null,
         ...(id && { id }),
         ...(name && { name }),    
@@ -36,16 +40,16 @@ export class AccountsModel {
     }); 
   }
 
-  public async update({id, ...card}: UpdateAccountDTO) { 
+  public async update({id, userId, ...card}: UpdateAccountDTO) { 
     return await this.prisma.accounts.update({ 
-      where: { id },
+      where: { id, userId },
       data: card
     });    
   }
 
-  public async remove(id: number) { 
+  public async remove(id: number, userId: number) { 
     return await this.prisma.accounts.update({ 
-      where: { id },
+      where: { id, userId },
       data: { deletedAt: new Date() }
     });    
   }
