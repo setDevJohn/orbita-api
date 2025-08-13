@@ -7,6 +7,7 @@ export interface CardBase {
   creditLimit: Decimal | null;
   closingDay: number;
   dueDay: number;
+  userId: number;
 } 
 
 // Payload to create on model
@@ -17,10 +18,12 @@ export type UpdateCardDTO = CardBase
 
 // FindMany query
 export interface FindManyQuery {
+  userId: number
   month: string
 }
 
 export interface CardParamsDTO {
+  userId: number
   id?: number
   name?: string
   excludeId?: number

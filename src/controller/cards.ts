@@ -4,6 +4,7 @@ import { ResponseHandler } from "../helpers/responseHandler";
 import { CardsModel } from "../models/cards";
 import { FindManyQuery } from "../interfaces/cards";
 import { AppError, HttpStatus } from "../helpers/appError";
+import { ITokenData } from "../helpers/jwt";
 
 export class CardsController {
   private cardsModel: CardsModel;
@@ -14,7 +15,12 @@ export class CardsController {
 
   public async create (req: Request, res: Response) {
     try {
-      const existingCard = await this.cardsModel.findOne({name: req.body.name});
+      const { id: userId } = res.locals.user as ITokenData
+      
+      const existingCard = await this.cardsModel.findOne({ 
+        userId,
+        name: req.body.name
+      });
 
       if (existingCard) {
         throw new AppError('Cartão ja cadastrado', HttpStatus.BAD_REQUEST)  
@@ -24,7 +30,8 @@ export class CardsController {
         name: req.body.name,
         creditLimit: req.body.creditLimit,
         closingDay: req.body.closingDay,
-        dueDay: req.body.dueDay
+        dueDay: req.body.dueDay,
+        userId,
       }
 
       const response = await this.cardsModel.create(payload);
@@ -42,7 +49,12 @@ export class CardsController {
 
   public async update (req: Request, res: Response) {
     try {
-      const existingCard = await this.cardsModel.findOne({id: +req.body.id});
+      const { id: userId } = res.locals.user as ITokenData
+
+      const existingCard = await this.cardsModel.findOne({
+        userId,
+        id: +req.body.id
+      });
 
       if (!existingCard) {
         throw new AppError('Cartão nao encontrado', HttpStatus.BAD_REQUEST)  
@@ -50,7 +62,8 @@ export class CardsController {
 
       const existingCardByNames = await this.cardsModel.findOne({
         name: req.body.name,
-        excludeId: +req.body.id
+        excludeId: +req.body.id,
+        userId,
       });
 
       if (existingCardByNames) {
@@ -62,7 +75,8 @@ export class CardsController {
         name: req.body.name,
         creditLimit: req.body.creditLimit,
         closingDay: req.body.closingDay,
-        dueDay: req.body.dueDay
+        dueDay: req.body.dueDay,
+        userId,
       }
 
       const response = await this.cardsModel.update(payload);
@@ -81,14 +95,18 @@ export class CardsController {
   public async remove (req: Request, res: Response) {
     try {
       const { cardId } = req.params
+      const { id: userId } = res.locals.user as ITokenData
 
-      const existingCard = await this.cardsModel.findOne({id: +cardId});
+      const existingCard = await this.cardsModel.findOne({
+        userId,
+        id: +cardId
+      });
 
       if (!existingCard) {
         throw new AppError('Cartão nao encontrado', HttpStatus.BAD_REQUEST)  
       }   
 
-      await this.cardsModel.remove(+cardId);
+      await this.cardsModel.remove(+cardId, userId);
 
       return new ResponseHandler().success(
         res,
@@ -103,9 +121,11 @@ export class CardsController {
   
   public async findMany (req: Request, res: Response) {
     try {
+      const { id: userId } = res.locals.user as ITokenData
 
       const findManyQuery: FindManyQuery = {
-        month: String(req.query.month ?? new Date().getMonth() + 1)
+        userId,
+        month: String(req.query.month ?? new Date().getMonth() + 1),
       }
 
       const response = await this.cardsModel.findMany(findManyQuery);

@@ -12,23 +12,24 @@ export class CardsModel {
     return await this.prisma.cards.create({ data: card }); 
   }
 
-  public async update({id, ...card}: UpdateCardDTO) { 
+  public async update({id, userId, ...card}: UpdateCardDTO) { 
     return await this.prisma.cards.update({ 
-      where: { id }, 
+      where: { id, userId }, 
       data: card
     }); 
   }
 
-  public async remove(id : number) { 
+  public async remove(id : number, userId: number) { 
     return await this.prisma.cards.update({ 
-      where: { id },
+      where: { id, userId },
       data: { deletedAt: new Date() }
     }); 
   }
 
-  public async findMany({month}: FindManyQuery): Promise<FindManyResponse[]> { 
+  public async findMany({ userId, month }: FindManyQuery): Promise<FindManyResponse[]> { 
     const cardList = await this.prisma.cards.findMany({ 
       where: {
+        userId,
         deletedAt: null
       },
       select: {
@@ -37,6 +38,7 @@ export class CardsModel {
         creditLimit: true,
         closingDay: true,
         dueDay: true,
+        userId: true
       }
     });
 
@@ -45,13 +47,14 @@ export class CardsModel {
     return cardList
   }
 
-  public async findOne({ id, name, excludeId }: CardParamsDTO) { 
+  public async findOne({ userId, id, name, excludeId }: CardParamsDTO) { 
     return await this.prisma.cards.findFirst({
       where: { 
+        userId,
+        deletedAt: null,
         ...(id && { id }),
         ...(name && { name }),    
         ...(excludeId && { NOT: {id : excludeId } }),
-        deletedAt: null
       }
     }); 
   }
