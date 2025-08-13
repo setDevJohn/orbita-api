@@ -14,6 +14,7 @@ export interface TransactionBase {
   categoryId: number | null
   accountId: number | null
   cardId: number | null
+  userId: number
 }
 
 export type TransactionPayloadForm = TransactionBase
@@ -56,6 +57,7 @@ export interface FindAllQueryParams {
   limit: number,
   offset: number,
   all: boolean
+  userId: number,
   type?: $Enums.transactions_type
   month?: number
   extract?: boolean

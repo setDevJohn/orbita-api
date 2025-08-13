@@ -24,6 +24,7 @@ export class TransactionsModel {
     limit,
     offset,
     all,
+    userId,
     type,
     month,
     extract,
@@ -56,6 +57,7 @@ export class TransactionsModel {
 
     const transactions = await this.prisma.transactions.findMany({
       where: {
+        userId,
         deletedAt: null,
         ...(type && { type }),
         ...(month && { referenceMonth: month }),
@@ -115,7 +117,8 @@ export class TransactionsModel {
 
     const valuesByType = await this.prisma.transactions.findMany({
       where: {
-       deletedAt: null,
+        userId,
+        deletedAt: null,
         ...(month && { referenceMonth: month }),
         ...(customDate || dateFilter && { 
           transactionDate: customDate || dateFilter 

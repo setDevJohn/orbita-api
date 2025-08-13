@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import { CardBase } from "../interfaces/cards";
 import { Decimal } from "@prisma/client/runtime/library";
 import { $Enums } from "@prisma/client";
+import { ITokenData } from "../helpers/jwt";
 
 export class TransactionsController {
   private transactionsModel: TransactionsModel;
@@ -22,11 +23,13 @@ export class TransactionsController {
   public async create (req: Request, res: Response) {
     try {
       const data = req.body
+      const { id: userId } = res.locals.user as ITokenData
 
       let card: CardBase | null = null
 
       if (data.source === 'card') {
         card = await this.cardsModel.findOne({
+          userId,
           id: data.cardId
         })
       }
@@ -64,6 +67,7 @@ export class TransactionsController {
         totalInstallments: null,
         accountId: data.accountId ?? null,
         cardId: data.cardId ?? null,
+        userId
       }
 
       let payload: TransactionBase[] = [payloadBase]
@@ -111,6 +115,7 @@ export class TransactionsController {
 
   public async findAll(req: Request, res: Response) {
     try {
+      const { id: userId } = res.locals.user as ITokenData
       const { 
         page = '1',
         limit = '10',
@@ -127,6 +132,7 @@ export class TransactionsController {
         offset: (Number(page) - 1) * Number(limit),
         limit: Number(limit),
         all: all === 'true',
+        userId,
         ...(type && $Enums.transactions_type[type as $Enums.transactions_type] && { 
           type: type as $Enums.transactions_type
         }),
