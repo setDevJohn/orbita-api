@@ -2,7 +2,7 @@ import { AppError, HttpStatus } from "./appError";
 import jwt from "jsonwebtoken";
 
 
-interface ITokenData {
+export interface ITokenData {
   id: number;
   email: string;
   verified: boolean;
