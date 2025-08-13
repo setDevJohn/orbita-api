@@ -38,7 +38,6 @@ export class CardsModel {
         creditLimit: true,
         closingDay: true,
         dueDay: true,
-        userId: true
       }
     });
 
