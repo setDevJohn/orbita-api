@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { FindOneParams, UserPayloadDTO } from "../interfaces/users";
+import { FindOneParams, UpdateUserParams, UserPayloadDTO } from "../interfaces/users";
 
 export class UsersModel {
   prisma = new PrismaClient();
@@ -23,10 +23,13 @@ export class UsersModel {
     }); 
   }
 
-  public async updatePassword(id: number, password: string) {
+  public async update(id: number, data: UpdateUserParams) {
     return this.prisma.users.update({
       where: { id },
-      data: { password }
+      data: { 
+        ...(data.password && { password: data.password }),
+        ...(data.passwordResetToken && { passwordResetToken: data.passwordResetToken })
+      }
     })
   }
 }
