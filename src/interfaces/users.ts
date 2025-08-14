@@ -8,3 +8,8 @@ export interface FindOneParams {
   id?: number;
   email?: string;
 }
+
+export interface UpdateUserParams {
+  password?: string
+  passwordResetToken?: string
+}
