@@ -5,6 +5,8 @@ import { UsersModel } from "../models/users";
 import { AppError, HttpStatus } from "../helpers/appError";
 import bcrypt from 'bcrypt'
 import { generateToken, verifyToken } from "../helpers/jwt";
+import { sendEmail } from "../emailService";
+import { generateRandonToken } from "../helpers/generateToken";
 
 export class UsersController {
   private usersModel: UsersModel;
@@ -135,7 +137,7 @@ export class UsersController {
       const SALT_ROUNDS = 10
       const passHashed = await bcrypt.hash(password, SALT_ROUNDS)
 
-      await this.usersModel.updatePassword(userId, passHashed)
+      await this.usersModel.update(userId, { password: passHashed })
 
       return new ResponseHandler().success(res, user);
     } catch (err) {
@@ -153,7 +155,16 @@ export class UsersController {
         throw new AppError('Usuário não encontrado', HttpStatus.NOT_FOUND)
       }
 
-      // TODO: Enviar email
+      const generatedToken = generateRandonToken()
+      await this.usersModel.update(user.id, { passwordResetToken: generatedToken })
+
+      await sendEmail({
+        to: email,
+        subject: 'Recuperação de senha',
+        htmlFileName: 'resetPassword',
+        token: generatedToken
+      })
+
       return new ResponseHandler().success(res, user);
     } catch (err) {
       return errorHandler(err as Error, res);
