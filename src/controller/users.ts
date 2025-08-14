@@ -37,9 +37,7 @@ export class UsersController {
 
       return new ResponseHandler().success(
         res,
-        200,
         { id: user.id, email: user.email },
-        'Usuário criado com sucesso'
       );
     } catch (err) {
       return errorHandler(err as Error, res)
@@ -93,12 +91,7 @@ export class UsersController {
       });
 
       // TODO: Atualizar data de login e failedAttempts para 0
-      return new ResponseHandler().success(
-        res,
-        200,
-        null,
-        'Usuário autenticado com sucesso!'
-      );
+      return new ResponseHandler().success(res, null);
     } catch (err) {
       return errorHandler(err as Error, res)
     }
@@ -113,12 +106,7 @@ export class UsersController {
       }
       const decoded = verifyToken(token);
 
-      return new ResponseHandler().success(
-        res,
-        200,
-        decoded,
-        'Usuário verificado com sucesso!'
-      );
+      return new ResponseHandler().success(res, decoded);
     } catch (err) {
       return errorHandler(err as Error, res);
     }
@@ -131,11 +119,33 @@ export class UsersController {
       sameSite: "strict"
     });
 
-    return new ResponseHandler().success(
-      res,  
-      200,
-      null,
-      'Logout realizado com sucesso!'
-    );
+    return new ResponseHandler().success(res, null);
+  }
+
+  public async passwordRecovery (req: Request, res: Response) {
+    try {
+
+      return new ResponseHandler().success(res, null);
+    } catch (err) {
+      return errorHandler(err as Error, res);
+    }
+  }
+
+  public async sendEmailToRecoveryPassword (req: Request, res: Response) {
+    try {
+
+      return new ResponseHandler().success(res, null);
+    } catch (err) {
+      return errorHandler(err as Error, res);
+    }
+  }
+  
+  public async comfirmTokenToRecoveryPassword (req: Request, res: Response) {
+    try {
+
+      return new ResponseHandler().success(res, null);
+    } catch (err) {
+      return errorHandler(err as Error, res);
+    }
   }
 }

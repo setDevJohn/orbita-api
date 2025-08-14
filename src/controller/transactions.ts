@@ -10,6 +10,7 @@ import { CardBase } from "../interfaces/cards";
 import { Decimal } from "@prisma/client/runtime/library";
 import { $Enums } from "@prisma/client";
 import { ITokenData } from "../helpers/jwt";
+import { HttpStatus } from "../helpers/appError";
 
 export class TransactionsController {
   private transactionsModel: TransactionsModel;
@@ -104,9 +105,8 @@ export class TransactionsController {
 
       return new ResponseHandler().success(
         res,
-        201,
-        {},
-        'Transação criada com sucesso'
+        null,
+        HttpStatus.CREATED,
       );
     } catch (err) {
       return errorHandler(err as Error, res)
@@ -153,12 +153,7 @@ export class TransactionsController {
         }, {} as Record<string, Decimal>)
       }
 
-      return new ResponseHandler().success(
-        res,
-        200,
-        formattedTransactions,
-        'Transações listadas com sucesso'
-      )
+      return new ResponseHandler().success(res, formattedTransactions)
     } catch (err) {
       return errorHandler(err as Error, res)
     }

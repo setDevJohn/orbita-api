@@ -33,9 +33,8 @@ export class AccountsController {
 
       return new ResponseHandler().success(
         res,
-        201,
         response,
-        'Conta criada com sucesso'
+        HttpStatus.CREATED,
       );
     } catch (err) {
       return errorHandler(err as Error, res)
@@ -48,12 +47,7 @@ export class AccountsController {
 
       const response = await this.accountsModel.findMany(userId);
 
-      return new ResponseHandler().success(
-        res,
-        200,
-        response,
-        'Contas listadas com sucesso'
-      );
+      return new ResponseHandler().success(res, response);
     } catch (err) {
       return errorHandler(err as Error, res)
     }
@@ -89,12 +83,7 @@ export class AccountsController {
 
       const response = await this.accountsModel.update(payload);
 
-      return new ResponseHandler().success(
-        res,
-        200,
-        response,
-        'Conta atualizada com sucesso'
-      );
+      return new ResponseHandler().success(res, response);
     } catch (err) {
       return errorHandler(err as Error, res)
     }
@@ -114,12 +103,7 @@ export class AccountsController {
 
       const response = await this.accountsModel.remove(+id, userId)
 
-      return new ResponseHandler().success(
-        res,
-        200,
-        response,
-        'Conta removida com sucesso'
-      );
+      return new ResponseHandler().success(res, response);
     } catch (err) {
       return errorHandler(err as Error, res)
     }

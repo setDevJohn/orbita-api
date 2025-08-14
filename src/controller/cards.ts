@@ -38,9 +38,8 @@ export class CardsController {
 
       return new ResponseHandler().success(
         res,
-        201,
         response,
-        'Cartão criado com sucesso'
+        HttpStatus.CREATED,
       );
     } catch (err) {
       return errorHandler(err as Error, res)
@@ -81,12 +80,7 @@ export class CardsController {
 
       const response = await this.cardsModel.update(payload);
 
-      return new ResponseHandler().success(
-        res,
-        200,
-        response,
-        'Cartão atualizado com sucesso'
-      );
+      return new ResponseHandler().success(res, response);
     } catch (err) {
       return errorHandler(err as Error, res)
     }
@@ -108,12 +102,7 @@ export class CardsController {
 
       await this.cardsModel.remove(+cardId, userId);
 
-      return new ResponseHandler().success(
-        res,
-        200,
-        null,
-        'Cartão removido com sucesso'
-      );
+      return new ResponseHandler().success(res, null);
     } catch (err) {
       return errorHandler(err as Error, res)
     }
@@ -130,12 +119,7 @@ export class CardsController {
 
       const response = await this.cardsModel.findMany(findManyQuery);
 
-      return new ResponseHandler().success(
-        res,
-        200,
-        response,
-        'Cartões listados com sucesso'
-      );
+      return new ResponseHandler().success(res, response);
     } catch (err) {
       return errorHandler(err as Error, res)
     }

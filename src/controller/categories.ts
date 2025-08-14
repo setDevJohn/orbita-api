@@ -27,9 +27,8 @@ export class CategoriesController {
 
       return new ResponseHandler().success(
         res,
-        201,
         response,
-        'Categoria criada com sucesso'
+        HttpStatus.CREATED,
       );
     } catch (err) {
       return errorHandler(err as Error, res)
@@ -60,12 +59,7 @@ export class CategoriesController {
  
       const response = await this.categoriesModel.update({ userId, id, name });
 
-      return new ResponseHandler().success(
-        res,
-        200,
-        response,
-        'Categoria atualizada com sucesso'
-      );
+      return new ResponseHandler().success(res, response);
     } catch (err) {
       return errorHandler(err as Error, res)
     }
@@ -77,12 +71,7 @@ export class CategoriesController {
 
       const response = await this.categoriesModel.findMany(userId);
 
-      return new ResponseHandler().success(
-        res,
-        200,
-        response,
-        'Categorias listadas com sucesso'
-      );
+      return new ResponseHandler().success(res, response);
     } catch (err) {
       return errorHandler(err as Error, res)
     }
@@ -104,12 +93,7 @@ export class CategoriesController {
 
       await this.categoriesModel.remove(+categoryId, userId);
 
-      return new ResponseHandler().success(
-        res,
-        200,
-        null,
-        'Categoria removida com sucesso'
-      );
+      return new ResponseHandler().success(res, null);
     } catch (err) {
       return errorHandler(err as Error, res)
     }
