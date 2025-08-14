@@ -33,4 +33,25 @@ usersRoutes.post('/logout',
   }
 )
 
+usersRoutes.patch('/password-recovery',
+  usersMiddleware.recoverPassword,
+  async (req, res) => {
+    await usersController.recoverPassword(req, res);
+  }
+)
+
+usersRoutes.post('/password-recovery/send-email',
+  usersMiddleware.sendEmailToRecoverPassword,
+  async (req, res) => {
+    await usersController.sendEmailToRecoverPassword(req, res);
+  }
+)
+
+usersRoutes.post('/password-recovery/confirm-token',
+  usersMiddleware.confirmTokenToRecoverPassword,
+  async (req, res) => {
+    await usersController.confirmTokenToRecoverPassword(req, res);
+  }
+)
+
 export { usersRoutes }  

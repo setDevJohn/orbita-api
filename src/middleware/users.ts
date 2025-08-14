@@ -63,4 +63,74 @@ export class UsersMiddleware {
       errorHandler(err as Error, res)
     }
   }
+
+  public recoverPassword (req: Request, res: Response, next: NextFunction) {
+    try {
+      const { userId, password } = req.body
+
+      if (!userId) {
+        throw new AppError('Id do usuário é obrigatório', HttpStatus.BAD_REQUEST)
+      }  
+
+      if (Number.isNaN(+userId) || !Number.isInteger(+userId)) {
+        throw new AppError('Id do usuário deve ser um número inteiro', HttpStatus.BAD_REQUEST)
+      }
+
+      if (!password) {
+        throw new AppError('Senha não enviada', HttpStatus.BAD_REQUEST);
+      }
+
+      if (typeof(password) !== 'string') {
+        throw new AppError('Senha deve ser uma string', HttpStatus.BAD_REQUEST)
+      }
+
+      if (password.length < 6) {
+        throw new AppError('Senha deve ter no mínimo 6 caracteres', HttpStatus.BAD_REQUEST)
+      }      
+
+      next()
+    } catch (err) {
+      errorHandler(err as Error, res)
+    }
+  }
+
+  public sendEmailToRecoverPassword (req: Request, res: Response, next: NextFunction) {
+    try {
+      const { email } = req.body
+
+      if (!email) {
+        throw new AppError('Email não enviado', HttpStatus.BAD_REQUEST)
+      }
+       
+      next()
+    } catch (err) {
+      errorHandler(err as Error, res)
+    }
+  }
+
+  public confirmTokenToRecoverPassword (req: Request, res: Response, next: NextFunction) {
+    try {
+      const { userId, token } = req.body
+
+      if (!userId) {
+        throw new AppError('Id do usuário é obrigatório', HttpStatus.BAD_REQUEST)
+      }  
+
+      if (Number.isNaN(+userId) || !Number.isInteger(+userId)) {
+        throw new AppError('Id do usuário deve ser um número inteiro', HttpStatus.BAD_REQUEST)
+      }
+
+      if (!token) {
+        throw new AppError('Token não enviado', HttpStatus.BAD_REQUEST)
+      } 
+
+      if (token.lenth !== 6) {
+        throw new AppError('Token inválido', HttpStatus.BAD_REQUEST)
+      }
+      
+      next()
+    } catch (err) {
+      errorHandler(err as Error, res)
+    }
+  }
 }

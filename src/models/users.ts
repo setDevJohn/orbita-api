@@ -22,4 +22,11 @@ export class UsersModel {
       },
     }); 
   }
+
+  public async updatePassword(id: number, password: string) {
+    return this.prisma.users.update({
+      where: { id },
+      data: { password }
+    })
+  }
 }

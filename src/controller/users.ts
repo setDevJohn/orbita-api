@@ -122,28 +122,59 @@ export class UsersController {
     return new ResponseHandler().success(res, null);
   }
 
-  public async passwordRecovery (req: Request, res: Response) {
+  public async recoverPassword (req: Request, res: Response) {
     try {
+      const { userId, password } = req.body
 
-      return new ResponseHandler().success(res, null);
+      const user = await this.usersModel.findOne({ id: +userId })
+
+      if (!user) {
+        throw new AppError('Usuário não encontrado', HttpStatus.NOT_FOUND)
+      }
+
+      const SALT_ROUNDS = 10
+      const passHashed = await bcrypt.hash(password, SALT_ROUNDS)
+
+      await this.usersModel.updatePassword(userId, passHashed)
+
+      return new ResponseHandler().success(res, user);
     } catch (err) {
       return errorHandler(err as Error, res);
     }
   }
 
-  public async sendEmailToRecoveryPassword (req: Request, res: Response) {
+  public async sendEmailToRecoverPassword (req: Request, res: Response) {
     try {
+      const { email } = req.body
 
-      return new ResponseHandler().success(res, null);
+      const user = await this.usersModel.findOne({ email })
+
+      if (!user) {
+        throw new AppError('Usuário não encontrado', HttpStatus.NOT_FOUND)
+      }
+
+      // TODO: Enviar email
+      return new ResponseHandler().success(res, user);
     } catch (err) {
       return errorHandler(err as Error, res);
     }
   }
   
-  public async comfirmTokenToRecoveryPassword (req: Request, res: Response) {
+  public async confirmTokenToRecoverPassword (req: Request, res: Response) {
     try {
+      const { userId, token } = req.body
 
-      return new ResponseHandler().success(res, null);
+      const user = await this.usersModel.findOne({ id: +userId })
+
+      if (!user) {
+        throw new AppError('Usuário não encontrado', HttpStatus.NOT_FOUND)
+      }
+
+      if (user.passwordResetToken !== token) {
+        throw new AppError('Token inválido', HttpStatus.BAD_REQUEST)
+      }
+
+      return new ResponseHandler().success(res, user);
     } catch (err) {
       return errorHandler(err as Error, res);
     }

@@ -5,5 +5,6 @@ export interface UserPayloadDTO {
 }
 
 export interface FindOneParams {
+  id?: number;
   email?: string;
 }
