@@ -1,10 +1,13 @@
-import nodemailer from "nodemailer"
+import nodemailer from "nodemailer";
 import { AppError, HttpStatus } from "./helpers/appError";
+import path from "path";
+import fs from "fs";
 
 interface SendEmailProps {
-  to: string,
-  subject: string,
-  html: string
+  to: string;
+  subject: string;
+  htmlFileName: string;
+  token: string;
 }
 
 const PORT = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : 587;
@@ -15,11 +18,11 @@ const transporter = nodemailer.createTransport({
   secure: false,
   auth: {
     user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  }
+    pass: process.env.SMTP_PASS,
+  },
 });
 
-transporter.verify((error, success) => {
+transporter.verify((error) => {
   if (error) {
     console.error("\nError on connect SMTP server", error);
   } else {
@@ -27,17 +30,27 @@ transporter.verify((error, success) => {
   }
 });
 
-export const sendEmail = async ({ to, subject, html }: SendEmailProps) => {
+export const sendEmail = async ({
+  to,
+  subject,
+  htmlFileName,
+  token,
+}: SendEmailProps) => {
   try {
+    // Aqui __dirname funciona no CommonJS
+    const templatePath = path.resolve(__dirname, "templates", `${htmlFileName}.html`);
+    let content = fs.readFileSync(templatePath, "utf-8");
+
+    content = content.replace("{{token}}", token);
+
     return transporter.sendMail({
       from: `"Orbita Finance" <${process.env.SMTP_USER_FROM}>`,
       to,
       subject,
-      html,
-    })
-
+      html: content,
+    });
   } catch (err) {
-    console.error(`Erro ao enviar email para ${to}: `, err)
-    throw new AppError('Erro ao enviar email', HttpStatus.INTERNAL_SERVER_ERROR)
+    console.error(`Erro ao enviar email para ${to}: `, err);
+    throw new AppError("Erro ao enviar email", HttpStatus.INTERNAL_SERVER_ERROR);
   }
-}
+};
