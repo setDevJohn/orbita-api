@@ -38,7 +38,7 @@ export const sendEmail = async ({
 }: SendEmailProps) => {
   try {
     // Aqui __dirname funciona no CommonJS
-    const templatePath = path.resolve(__dirname, "templates", `${htmlFileName}.html`);
+    const templatePath = path.resolve(process.cwd(), "src", "templates", `${htmlFileName}.html`);
     let content = fs.readFileSync(templatePath, "utf-8");
 
     content = content.replace("{{token}}", token);
