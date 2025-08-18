@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { FindOneParams, UpdateUserParams, UserPayloadDTO } from "../interfaces/users";
+import { FindOneParams, UpdateUserParams, UserBase, UserPayloadDTO } from "../interfaces/users";
 
 export class UsersModel {
   prisma = new PrismaClient();
@@ -14,7 +14,7 @@ export class UsersModel {
     })
   }
 
-  public async findOne({ email }: FindOneParams) { 
+  public async findOne({ email }: FindOneParams): Promise<UserBase | null> { 
     return this.prisma.users.findFirst({ 
       where: {
         deletedAt: null,
