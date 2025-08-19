@@ -11,7 +11,7 @@ export class CategoriesMiddleware {
 
   public create(req: Request, res: Response, next: NextFunction): void {
     try {
-      const { name } = req.body
+      const { name } = req.body || {}
 
       if (!name) {
         throw new AppError('Nome da categoria é obrigatorio', HttpStatus.BAD_REQUEST)
@@ -25,7 +25,7 @@ export class CategoriesMiddleware {
 
   public update(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id, name } = req.body
+      const { id, name } = req.body || {}
 
       if (!id) {
         throw new AppError('Id da categoria é obrigatorio', HttpStatus.BAD_REQUEST)
@@ -43,7 +43,7 @@ export class CategoriesMiddleware {
 
   public remove(req: Request, res: Response, next: NextFunction) {
     try {
-      const { categoryId } = req.params
+      const { categoryId } = req.params || {}
 
       if (!categoryId) {
         throw new AppError('Id da categoria é obrigatorio', HttpStatus.BAD_REQUEST)

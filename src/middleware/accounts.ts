@@ -8,7 +8,7 @@ export class AccountsMiddleware {
 
   public create (req: Request, res: Response, next: NextFunction) {
     try {
-      const { name, balance } = req.body
+      const { name, balance } = req.body || {}
 
       if (!name) {
         throw new AppError('Nome da conta é obrigatorio', HttpStatus.BAD_REQUEST);
@@ -30,7 +30,7 @@ export class AccountsMiddleware {
 
   public update (req: Request, res: Response, next: NextFunction) {
     try {
-      const { id, name, balance } = req.body
+      const { id, name, balance } = req.body || {}
 
       if (!name) {
         throw new AppError('Nome da conta é obrigatorio', HttpStatus.BAD_REQUEST);
@@ -56,7 +56,7 @@ export class AccountsMiddleware {
 
   public remove (req: Request, res: Response, next: NextFunction) {
     try {
-      const { id } = req.params;
+      const { id } = req.params || {};
 
       if (!id) {
         throw new AppError('Id da conta é obrigatorio', HttpStatus.BAD_REQUEST);

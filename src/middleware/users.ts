@@ -8,7 +8,7 @@ export class UsersMiddleware {
 
   public auth (req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password, stayConect } = req.body;
+      const { email, password, stayConect } = req.body || {};
 
       if (!email) {
         throw new AppError('Email não enviado', HttpStatus.BAD_REQUEST);
@@ -31,7 +31,7 @@ export class UsersMiddleware {
 
   public create (req: Request, res: Response, next: NextFunction) {
     try {
-      const { name, email, password } = req.body
+      const { name, email, password } = req.body || {}
 
       if (!name) {
         throw new AppError('Nome não enviado', HttpStatus.BAD_REQUEST);
@@ -66,7 +66,7 @@ export class UsersMiddleware {
 
   public recoverPassword (req: Request, res: Response, next: NextFunction) {
     try {
-      const { userId, password, token } = req.body
+      const { userId, password, token } = req.body || {}
 
       if (!userId) {
         throw new AppError('Id do usuário é obrigatório', HttpStatus.BAD_REQUEST)
@@ -104,7 +104,7 @@ export class UsersMiddleware {
 
   public sendEmailToRecoverPassword (req: Request, res: Response, next: NextFunction) {
     try {
-      const { email } = req.body
+      const { email } = req.body || {}
 
       if (!email) {
         throw new AppError('Email não enviado', HttpStatus.BAD_REQUEST)
@@ -118,7 +118,7 @@ export class UsersMiddleware {
 
   public confirmTokenToRecoverPassword (req: Request, res: Response, next: NextFunction) {
     try {
-      const { userId, token } = req.body
+      const { userId, token } = req.body || {}
 
       if (!userId) {
         throw new AppError('Id do usuário é obrigatório', HttpStatus.BAD_REQUEST)
