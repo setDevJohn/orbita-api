@@ -37,11 +37,15 @@ export const sendEmail = async ({
   token,
 }: SendEmailProps) => {
   try {
-    // Aqui __dirname funciona no CommonJS
     const templatePath = path.resolve(process.cwd(), "src", "templates", `${htmlFileName}.html`);
     let content = fs.readFileSync(templatePath, "utf-8");
 
+    const currentYear = new Date().getFullYear().toString();
+    const apiUrl = process.env.API_URL || 'https://localhost:3000'
+
     content = content.replace("{{token}}", token);
+    content = content.replace("{{ano_atual}}", currentYear);
+    content = content.replace("{{project_url}}", apiUrl)
 
     return transporter.sendMail({
       from: `"Orbita Finance" <${process.env.SMTP_USER_FROM}>`,
