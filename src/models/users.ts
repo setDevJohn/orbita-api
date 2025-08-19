@@ -14,10 +14,11 @@ export class UsersModel {
     })
   }
 
-  public async findOne({ email }: FindOneParams): Promise<UserBase | null> { 
+  public async findOne({ id, email }: FindOneParams): Promise<UserBase | null> { 
     return this.prisma.users.findFirst({ 
       where: {
         deletedAt: null,
+        ...(id && { id }),
         ...(email && { email })
       },
     }); 
