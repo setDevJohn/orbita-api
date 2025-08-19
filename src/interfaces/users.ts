@@ -28,5 +28,5 @@ export interface FindOneParams {
 
 export interface UpdateUserParams {
   password?: string
-  passwordResetToken?: string
+  passwordResetToken?: string | null
 }
