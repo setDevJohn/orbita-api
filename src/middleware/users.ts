@@ -66,7 +66,7 @@ export class UsersMiddleware {
 
   public recoverPassword (req: Request, res: Response, next: NextFunction) {
     try {
-      const { userId, password } = req.body
+      const { userId, password, token } = req.body
 
       if (!userId) {
         throw new AppError('Id do usuário é obrigatório', HttpStatus.BAD_REQUEST)
@@ -86,7 +86,15 @@ export class UsersMiddleware {
 
       if (password.length < 6) {
         throw new AppError('Senha deve ter no mínimo 6 caracteres', HttpStatus.BAD_REQUEST)
-      }      
+      }
+
+      if (!token) {
+        throw new AppError('Token não enviado', HttpStatus.BAD_REQUEST)
+      } 
+
+      if (token.length !== 6) {
+        throw new AppError('Token inválido', HttpStatus.BAD_REQUEST)
+      }
 
       next()
     } catch (err) {
@@ -124,7 +132,7 @@ export class UsersMiddleware {
         throw new AppError('Token não enviado', HttpStatus.BAD_REQUEST)
       } 
 
-      if (token.lenth !== 6) {
+      if (token.length !== 6) {
         throw new AppError('Token inválido', HttpStatus.BAD_REQUEST)
       }
       
