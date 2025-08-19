@@ -126,7 +126,7 @@ export class UsersController {
 
   public async recoverPassword (req: Request, res: Response) {
     try {
-      const { userId, password } = req.body
+      const { userId, password, token } = req.body
 
       const user = await this.usersModel.findOne({ id: +userId })
 
@@ -134,10 +134,17 @@ export class UsersController {
         throw new AppError('Usuário não encontrado', HttpStatus.NOT_FOUND)
       }
 
+      if (user.passwordResetToken !== token) {
+        throw new AppError('Token inválido', HttpStatus.BAD_REQUEST)
+      }
+
       const SALT_ROUNDS = 10
       const passHashed = await bcrypt.hash(password, SALT_ROUNDS)
 
-      await this.usersModel.update(userId, { password: passHashed })
+      await this.usersModel.update(userId, { 
+        password: passHashed,
+        passwordResetToken: null
+      })
 
       return new ResponseHandler().success(res, user);
     } catch (err) {
@@ -180,7 +187,7 @@ export class UsersController {
       if (!user) {
         throw new AppError('Usuário não encontrado', HttpStatus.NOT_FOUND)
       }
-
+      
       if (user.passwordResetToken !== token) {
         throw new AppError('Token inválido', HttpStatus.BAD_REQUEST)
       }
