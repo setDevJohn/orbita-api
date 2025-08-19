@@ -1,26 +1,100 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Confirm Account</title>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Confirmação de Conta - Órbita</title>
   <style>
-    .token {
-      color: #5151A2;
-      padding: 10px;
-      border-radius: 4px;
-      background-color: #b5b5b5;
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background-color: #1a1a1a;
+      color: #eeeeee;
+    }
+
+    .container {
+      max-width: 600px;
       margin: 0 auto;
-      width: fit-content;
+      background-color: #2a2a2a;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      padding: 10px;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 24px;
+      color: #7373e6;
+      font-weight: 600;
+    } 
+
+    .content h2 {
+      text-align: center;
+    }
+
+    .content p {
+      font-size: 16px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .token-container {
+      text-align: center;
+    }
+
+    .token {
+      display: inline-block;
+      font-size: 23px;
+      letter-spacing: 2.5px;
+      font-weight: bold;
+      text-align: center;
+      color: #ffffff;
+      background-color: #7373e6;
+      padding: 12px 24px;
+      border-radius: 6px;
+      margin: 20px auto;
+    }
+
+    .footer {
+      font-size: 12px;
+      color: #aaaaaa;
+      margin-top: 30px;
+      text-align: center;
     }
   </style>
 </head>
-
 <body>
-  <h2>Confirmação de conta</h2>
+  <div class="container">
+     <table width="100%" align="center" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom: 30px;">
+        <tr>
+          <td align="center">
+            <img 
+              src="{{project_url}}/logo.png"
+              alt="Logo Órbita"
+              width="60"
+              height="60"
+              style="display: inline-block; vertical-align: middle; margin-right: 10px;"
+            />
+            <span class="title">Órbita</span>
+          </td>
+        </tr>
+      </table>
 
-  <p>Utilize o código de verificação abaixo para confirmar sua conta:</p>
-  <h3 class="token">{{token}}</h3>
+    <div class="content">
+      <h2>Confirmação de Conta</h2>
+      <p>Estamos quase lá! Use o código abaixo para confirmar sua conta e ativar seu acesso:</p>
+
+      <div class="token-container">
+        <div class="token">{{token}}</div>
+      </div>
+
+      <p>Se você não solicitou a criação de uma conta, ignore este e-mail com segurança.</p>
+    </div>
+
+    <div class="footer">
+      © {{ano_atual}} Órbita. Todos os direitos reservados.
+    </div>
+  </div>
 </body>
 </html>
