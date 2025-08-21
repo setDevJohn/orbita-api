@@ -48,7 +48,7 @@ export const sendEmail = async ({
     content = content.replace("{{project_url}}", apiUrl)
 
     return transporter.sendMail({
-      from: `"Orbita Finance" <${process.env.SMTP_USER_FROM}>`,
+      from: `"Suporte Órbita" <${process.env.SMTP_USER_FROM}>`,
       to,
       subject,
       html: content,
