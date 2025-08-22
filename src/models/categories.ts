@@ -1,26 +1,22 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../lib/prisma";
 import { CategoryFormPayloadDTO, FindManyCategoryListResponse, FindOneParamsDTO, UpdateCategoryPayloadDTO } from "../interfaces/categories";
 
 export class CategoriesModel {
-  prisma = new PrismaClient();
-
-  public constructor () {
-    this.prisma = new PrismaClient(); 
-  }
+  public constructor () {}
 
   public async create(category: CategoryFormPayloadDTO) { 
-    return await this.prisma.categories.create({ data: category }); 
+    return await prisma.categories.create({ data: category }); 
   }
 
   public async update({id, userId, ...category}: UpdateCategoryPayloadDTO) { 
-    return await this.prisma.categories.update({ 
+    return await prisma.categories.update({ 
       where: { id, userId },
       data: category
     }); 
   }
 
   public async findMany(userId: number): Promise<FindManyCategoryListResponse> { 
-    return await this.prisma.categories.findMany({ 
+    return await prisma.categories.findMany({ 
       where: {
         userId,
         deletedAt: null
@@ -33,7 +29,7 @@ export class CategoriesModel {
   }
 
   public async findOne({userId, id, name, excludeId}: FindOneParamsDTO) {
-    return await this.prisma.categories.findFirst({
+    return await prisma.categories.findFirst({
       where: {
         userId,
         ...(id && { id }),
@@ -48,7 +44,7 @@ export class CategoriesModel {
   }
 
   public async remove(id: number, userId: number) { 
-    await this.prisma.categories.delete({ 
+    await prisma.categories.delete({ 
       where: { id, userId }
     }); 
   }

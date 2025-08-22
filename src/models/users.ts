@@ -1,21 +1,17 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../lib/prisma";
 import { FindOneParams, UpdateUserParams, UserBase, UserPayloadDTO } from "../interfaces/users";
 
 export class UsersModel {
-  prisma = new PrismaClient();
-
-  public constructor () {
-    this.prisma = new PrismaClient(); 
-  }
+  public constructor () {}
 
   public async create(data: UserPayloadDTO) {
-    return this.prisma.users.create({
+    return prisma.users.create({
       data
     })
   }
 
   public async findOne({ id, email }: FindOneParams): Promise<UserBase | null> { 
-    return this.prisma.users.findFirst({ 
+    return prisma.users.findFirst({ 
       where: {
         deletedAt: null,
         ...(id && { id }),
@@ -25,7 +21,7 @@ export class UsersModel {
   }
 
   public async update(id: number, data: UpdateUserParams) {
-    return this.prisma.users.update({
+    return prisma.users.update({
       where: { id },
       data: { 
         ...(data.password && { password: data.password }),

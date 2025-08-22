@@ -1,21 +1,17 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../lib/prisma";
 import { AccountPayloadDTO, FindOneParams, UpdateAccountDTO } from "../interfaces/accounts";
 
 export class AccountsModel {
-  prisma = new PrismaClient();
-
-  public constructor () {
-    this.prisma = new PrismaClient(); 
-  }
+  public constructor () {}
 
   public async create(card: AccountPayloadDTO) { 
-    return await this.prisma.accounts.create({ 
+    return await prisma.accounts.create({ 
       data: card,
     }); 
   }
   
   public async findMany(userId: number) { 
-    return await this.prisma.accounts.findMany({ 
+    return await prisma.accounts.findMany({ 
       where: {
         userId,
         deletedAt: null
@@ -29,7 +25,7 @@ export class AccountsModel {
   }
   
   public async findOne({userId, id, name, excludeId}: FindOneParams) { 
-    return await this.prisma.accounts.findFirst({ 
+    return await prisma.accounts.findFirst({ 
       where: {
         userId,
         deletedAt: null,
@@ -41,14 +37,14 @@ export class AccountsModel {
   }
 
   public async update({id, userId, ...card}: UpdateAccountDTO) { 
-    return await this.prisma.accounts.update({ 
+    return await prisma.accounts.update({ 
       where: { id, userId },
       data: card
     });    
   }
 
   public async remove(id: number, userId: number) { 
-    return await this.prisma.accounts.update({ 
+    return await prisma.accounts.update({ 
       where: { id, userId },
       data: { deletedAt: new Date() }
     });    

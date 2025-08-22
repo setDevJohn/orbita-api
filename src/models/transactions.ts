@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../lib/prisma";
 import { DateTime } from "luxon";
 import { 
   FindAllQueryParams,
@@ -8,14 +8,10 @@ import {
 } from "../interfaces/transactions";
 
 export class TransactionsModel {
-  prisma = new PrismaClient();
-
-  public constructor () {
-    this.prisma = new PrismaClient(); 
-  }
+  public constructor () {}
 
   public async createMany(payloadList: TransactionPayloadForm[]) { 
-    return await this.prisma.transactions.createMany({
+    return await prisma.transactions.createMany({
       data: payloadList
     }); 
   }
@@ -55,7 +51,7 @@ export class TransactionsModel {
       projection: { transactionDate: 'asc' }
     }
 
-    const transactions = await this.prisma.transactions.findMany({
+    const transactions = await prisma.transactions.findMany({
       where: {
         userId,
         deletedAt: null,
@@ -115,7 +111,7 @@ export class TransactionsModel {
       })
     });
 
-    const valuesByType = await this.prisma.transactions.findMany({
+    const valuesByType = await prisma.transactions.findMany({
       where: {
         userId,
         deletedAt: null,
