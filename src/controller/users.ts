@@ -86,7 +86,7 @@ export class UsersController {
       res.cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        sameSite: "lax",
         maxAge: stayConect
           ? 30 * 24 * 60 * 60 * 1000 // 30 dias
           : 2 * 60 * 60 * 1000       // 2 horas
@@ -103,6 +103,7 @@ export class UsersController {
     try {
       const token = req.cookies?.token;
 
+      console.log("cookies", req.cookies)
       if (!token) {
         throw new AppError("Não autenticado", HttpStatus.UNAUTHORIZED);
       }
@@ -118,7 +119,7 @@ export class UsersController {
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict"
+      sameSite: "lax"
     });
 
     return new ResponseHandler().success(res, null);
