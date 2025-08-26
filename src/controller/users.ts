@@ -103,7 +103,6 @@ export class UsersController {
     try {
       const token = req.cookies?.token;
 
-      console.log("cookies", req.cookies)
       if (!token) {
         throw new AppError("Não autenticado", HttpStatus.UNAUTHORIZED);
       }
