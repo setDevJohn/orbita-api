@@ -23,6 +23,7 @@ export class TransactionsModel {
     userId,
     type,
     month,
+    year,
     extract,
     projection,
     description,
@@ -57,6 +58,7 @@ export class TransactionsModel {
         deletedAt: null,
         ...(type && { type }),
         ...(month && { referenceMonth: month }),
+        ...(year && { referenceYear: year }),
         ...(customDate || dateFilter && { 
           transactionDate: customDate || dateFilter 
         }),
@@ -116,6 +118,7 @@ export class TransactionsModel {
         userId,
         deletedAt: null,
         ...(month && { referenceMonth: month }),
+        ...(year && { referenceYear: year }),
         ...(customDate || dateFilter && { 
           transactionDate: customDate || dateFilter 
         }),

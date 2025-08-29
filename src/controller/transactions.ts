@@ -121,6 +121,7 @@ export class TransactionsController {
         limit = '10',
         all,
         month,
+        year,
         extract,
         projection,
         type,
@@ -137,6 +138,7 @@ export class TransactionsController {
           type: type as $Enums.transactions_type
         }),
         ...(month && !Number.isNaN(+month) && { month: +month }),
+        ...(year && !Number.isNaN(+year) && { year: +year }),
         ...(extract === 'true' && { extract: true }),
         ...(projection === 'true' && { projection: true }),
         ...(description && { description: String(description) }),

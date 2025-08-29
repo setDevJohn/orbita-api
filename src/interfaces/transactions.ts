@@ -60,6 +60,7 @@ export interface FindAllQueryParams {
   userId: number,
   type?: $Enums.transactions_type
   month?: number
+  year?: number
   extract?: boolean
   projection?: boolean
   description?: string
