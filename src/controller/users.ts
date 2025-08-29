@@ -79,6 +79,8 @@ export class UsersController {
         id: userExisting.id,
         email: userExisting.email,
         verified: userExisting.verified ?? false,
+        name: userExisting.name,
+        profileImage: `${process.env.API_URL}/image/users/${userExisting.id}`
       };
 
       const token = generateToken(tokenData, stayConect);
