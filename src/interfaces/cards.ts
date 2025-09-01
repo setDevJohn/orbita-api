@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/library";
 
 // Card Base
@@ -22,7 +23,8 @@ export type UpdateCardDTO = CardBase & {
 // FindMany query
 export interface FindManyQuery {
   userId: number
-  month: string
+  month?: number
+  year?: number
 }
 
 export interface CardParamsDTO {
@@ -33,4 +35,18 @@ export interface CardParamsDTO {
 }
 
 // FindMany Response
-export type FindManyResponse = CardBase
+export type FindManyResponse = CardBase & {
+  transactions: Array<{
+    id: number,
+    name: string,
+    type: $Enums.transactions_type,
+    amount: Decimal,
+    transactionDate: Date,
+    source: $Enums.transactions_source,
+    referenceMonth: number,
+    referenceYear: number,
+    currenInstallment: number | null,
+    totalInstallments: number | null,
+    cardId: number | null,
+  }>
+}

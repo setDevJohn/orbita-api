@@ -111,15 +111,27 @@ export class CardsController {
   public async findMany (req: Request, res: Response) {
     try {
       const { id: userId } = res.locals.user as ITokenData
+      const { month, year } = req.query || {}
 
       const findManyQuery: FindManyQuery = {
         userId,
-        month: String(req.query.month ?? new Date().getMonth() + 1),
+        ...(month && !Number.isNaN(+month) && { month: +month }),
+        ...(year && !Number.isNaN(+year) && { year: +year })
       }
 
       const response = await this.cardsModel.findMany(findManyQuery);
 
-      return new ResponseHandler().success(res, response);
+      const cardsWithInvoiceValue = response.map(({transactions, ...card}) => {
+        const invoiceValue = transactions.reduce((acc, cur) => acc + +cur.amount, 0)
+
+        return {
+          ...card,
+          invoice: invoiceValue,
+          availableCreditLimit: card?.creditLimit? +card.creditLimit - invoiceValue : 0
+        }
+      })
+
+      return new ResponseHandler().success(res, cardsWithInvoiceValue);
     } catch (err) {
       return errorHandler(err as Error, res)
     }

@@ -1,5 +1,5 @@
 import { CardsMiddleware } from '../../middleware/cards';
-import { Request, Response, Router } from "express";
+import { Router } from "express";
 import { CardsController } from "../../controller/cards";
 
 const cardsRoutes = Router();

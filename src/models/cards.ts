@@ -22,8 +22,8 @@ export class CardsModel {
     }); 
   }
 
-  public async findMany({ userId, month }: FindManyQuery): Promise<FindManyResponse[]> { 
-    const cardList = await prisma.cards.findMany({ 
+  public async findMany({ userId, month, year }: FindManyQuery): Promise<FindManyResponse[]> {
+    return prisma.cards.findMany({ 
       where: {
         userId,
         deletedAt: null
@@ -34,12 +34,35 @@ export class CardsModel {
         creditLimit: true,
         closingDay: true,
         dueDay: true,
+        transactions: {
+          where: {
+            deletedAt: null,
+            ...(month && year && {
+              OR: [
+                { referenceYear: { gt: year } },
+                {
+                  referenceYear: year,
+                  referenceMonth: { gte: month }
+                }
+              ]
+            })
+          },
+          select: {
+            id: true,
+            name: true,
+            type: true,
+            amount: true,
+            transactionDate: true,
+            source: true,
+            referenceMonth: true,
+            referenceYear: true,
+            currenInstallment: true,
+            totalInstallments: true,
+            cardId: true,
+          }
+        }
       }
     });
-
-    // TODO: Calcular limite restante do cartão
-    console.log(month)
-    return cardList
   }
 
   public async findOne({ userId, id, name, excludeId }: CardParamsDTO) { 
