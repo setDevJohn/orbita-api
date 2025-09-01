@@ -26,6 +26,7 @@ export class TransactionsModel {
     year,
     extract,
     projection,
+    noInstallments,
     description,
     date,
   } :FindAllQueryParams): Promise<{ 
@@ -66,6 +67,10 @@ export class TransactionsModel {
           { name: { contains: description } },
           { categories: { name: { contains: description } }},
         ]}),
+        ...(noInstallments && { OR: [
+          { currenInstallment: null },
+          { currenInstallment: { lte: 1 } }
+        ]})
       },
       select: {
         id: true,
@@ -126,6 +131,10 @@ export class TransactionsModel {
           { name: { contains: description } },
           { categories: { name: { contains: description } }},
         ]}),
+        ...(noInstallments && { OR: [
+          { currenInstallment: null },
+          { currenInstallment: { lte: 1 } }
+        ]})
       },
       select: {
         type: true,

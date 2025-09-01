@@ -124,6 +124,7 @@ export class TransactionsController {
         year,
         extract,
         projection,
+        noInstallments,
         type,
         description,
         date,
@@ -141,6 +142,7 @@ export class TransactionsController {
         ...(year && !Number.isNaN(+year) && { year: +year }),
         ...(extract === 'true' && { extract: true }),
         ...(projection === 'true' && { projection: true }),
+        ...(noInstallments === 'true' && { noInstallments: true }),
         ...(description && { description: String(description) }),
         ...(date && { date: date as string }),
       }

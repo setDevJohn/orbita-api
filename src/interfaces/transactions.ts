@@ -63,6 +63,7 @@ export interface FindAllQueryParams {
   year?: number
   extract?: boolean
   projection?: boolean
+  noInstallments?: boolean
   description?: string
   date?: string
 }
