@@ -7,8 +7,6 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.extend(isSameOrBefore)
 
-type Step = 'day' | 'week' | 'month' | 'year'
-
 interface DateRangeProps {
   range: [string, string]
   baseDate: Date
