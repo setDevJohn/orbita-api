@@ -5,19 +5,28 @@ import { TransactionsModel } from "../models/transactions";
 import { generateCustomDateRange } from "../helpers/generateCustomDateRange";
 import { TransactionBase } from "../interfaces/transactions";
 import { CardsModel } from "../models/cards";
-import dayjs from "dayjs";
 import { CardBase } from "../interfaces/cards";
 import { Decimal } from "@prisma/client/runtime/library";
 import { $Enums } from "@prisma/client";
 import { ITokenData } from "../helpers/jwt";
 import { HttpStatus } from "../helpers/appError";
+import { AccountsModel } from "../models/accounts";
+import { AccountBase } from "../interfaces/accounts";
+import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 export class TransactionsController {
   private transactionsModel: TransactionsModel;
+  private accountsModel: AccountsModel;
   private cardsModel: CardsModel;
 
   public constructor () {
     this.transactionsModel = new TransactionsModel();
+    this.accountsModel = new AccountsModel()
     this.cardsModel = new CardsModel();
   }
 
@@ -27,16 +36,26 @@ export class TransactionsController {
       const { id: userId } = res.locals.user as ITokenData
 
       let card: CardBase | null = null
+      let account: AccountBase | null = null
 
       if (data.source === 'card') {
         card = await this.cardsModel.findOne({
           userId,
           id: data.cardId
         })
+      } else {
+        account = await this.accountsModel.findOne({
+          userId,
+          id: data.accountId
+        })
       }
 
       const currentDay = dayjs(data.transactionDate).date()
       const closingDay = data.source === 'card' ? (card?.closingDay || 0) : Infinity
+
+      const getTZDate = (date: Date) => dayjs(date).tz("America/Sao_Paulo").format("YYYY-MM-DD HH:mm:ssZ");
+      data.transactionDate = getTZDate(data.transactionDate)
+      const currentDate = getTZDate(new Date())
 
       const calculateReference = (
         date: string | Date,
@@ -44,7 +63,7 @@ export class TransactionsController {
         currentDay: number
       ) => {
         const dt = dayjs(date)
-        const monthsToAdd = currentDay > closingDay ? 1 : 0
+        const monthsToAdd = currentDay >= closingDay ? 1 : 0
         const refDate = dt.add(monthsToAdd, 'month')
 
         return {
@@ -61,7 +80,7 @@ export class TransactionsController {
         amount: data.amount,
         transactionDate: new Date(data.transactionDate),
         source: data.source,
-        categoryId: data.categoryId,
+        categoryId: data.categoryId ?? undefined,
         referenceMonth: baseReference.referenceMonth,
         referenceYear: baseReference.referenceYear,
         currenInstallment: null,
@@ -102,6 +121,15 @@ export class TransactionsController {
       }
 
       await this.transactionsModel.createMany(payload);
+
+      if (data.source === 'account' && account && data.transactionDate <= currentDate) {
+        await this.accountsModel.updateBalance({
+          id: account.id,
+          userId,
+          type: data.type === 'income' ? 'increment' : 'decrement',
+          value: data.amount
+        })
+      }
 
       return new ResponseHandler().success(
         res,
