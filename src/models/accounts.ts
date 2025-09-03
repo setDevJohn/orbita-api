@@ -1,5 +1,5 @@
 import { prisma } from "../lib/prisma";
-import { AccountPayloadDTO, FindOneParams, UpdateAccountDTO } from "../interfaces/accounts";
+import { AccountPayloadDTO, FindOneParams, UpdateAccountDTO, UpdateBalanceParams } from "../interfaces/accounts";
 
 export class AccountsModel {
   public constructor () {}
@@ -48,5 +48,15 @@ export class AccountsModel {
       where: { id, userId },
       data: { deletedAt: new Date() }
     });    
+  }
+
+  public async updateBalance({ id, userId, type, value }: UpdateBalanceParams) {
+    return prisma.accounts.update({
+      where: { id, userId },
+      data: {
+        balance: type === 'increment' 
+          ? { increment: value } : { decrement: value }
+      }
+    })
   }
 }

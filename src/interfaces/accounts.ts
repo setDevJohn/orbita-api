@@ -1,9 +1,9 @@
 import { Decimal } from "@prisma/client/runtime/library";
 
-interface AccountBase {
+export interface AccountBase {
   id: number;
   name: string;
-  balance: Decimal;
+  balance: Decimal | null;
   userId: number
 }
 
@@ -22,4 +22,11 @@ export interface FindManyResponse {
   id: number;
   name: string;
   balance: Decimal | null;
+}
+
+export interface UpdateBalanceParams {
+  id: number
+  userId: number
+  type: 'increment' | 'decrement'
+  value: number
 }
