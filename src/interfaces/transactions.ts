@@ -5,7 +5,7 @@ export interface TransactionBase {
   name: string
   type: $Enums.transactions_type
   amount: Decimal
-  transactionDate: Date
+  transactionDate: string
   source: $Enums.transactions_source
   referenceMonth: number
   referenceYear: number
