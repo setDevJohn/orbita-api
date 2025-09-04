@@ -14,11 +14,8 @@ export class AccountsMiddleware {
         throw new AppError('Nome da conta é obrigatorio', HttpStatus.BAD_REQUEST);
       }
 
-      if (!balance) {
-        throw new AppError('Saldo da conta é obrigatorio', HttpStatus.BAD_REQUEST);
-      }
 
-      if (balance.toString().length > 11 || Number.isNaN(+balance)) {
+      if (balance && balance.toString().length > 11 || Number.isNaN(+balance)) {
         throw new AppError('Saldo da conta inválido', HttpStatus.BAD_REQUEST);
       }
 
@@ -36,11 +33,7 @@ export class AccountsMiddleware {
         throw new AppError('Nome da conta é obrigatorio', HttpStatus.BAD_REQUEST);
       }
 
-      if (!balance) {
-        throw new AppError('Saldo da conta é obrigatorio', HttpStatus.BAD_REQUEST);
-      }
-
-      if (balance.toString().length > 11 || Number.isNaN(+balance)) {
+      if (balance && balance.toString().length > 11 || Number.isNaN(+balance)) {
         throw new AppError('Saldo da conta inválido', HttpStatus.BAD_REQUEST);
       }
 
