@@ -65,6 +65,7 @@ model transactions {
   categoryId        Int?                @map("category_id")
   accountId         Int?                @map("account_id")
   cardId            Int?                @map("card_id")
+  isApplied         Boolean             @default(false) @map("is_applied")
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt         DateTime?           @map("updated_at") @db.Timestamp(0)
   deletedAt         DateTime?           @map("deleted_at") @db.Timestamp(0)
