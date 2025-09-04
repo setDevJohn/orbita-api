@@ -12,7 +12,7 @@ import { ITokenData } from "../helpers/jwt";
 import { HttpStatus } from "../helpers/appError";
 import { AccountsModel } from "../models/accounts";
 import { AccountBase } from "../interfaces/accounts";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 
@@ -53,9 +53,9 @@ export class TransactionsController {
       const currentDay = dayjs(data.transactionDate).date()
       const closingDay = data.source === 'card' ? (card?.closingDay || 0) : Infinity
 
-      const getTZDate = (date: Date) => dayjs(date).tz("America/Sao_Paulo").format("YYYY-MM-DD HH:mm:ssZ");
-      data.transactionDate = getTZDate(data.transactionDate)
-      const currentDate = getTZDate(new Date())
+      const getTZ = (date: Dayjs) => date.tz("America/Sao_Paulo").format("YYYY-MM-DD HH:mm:ssZ");
+      data.transactionDate = getTZ(dayjs(data.transactionDate))
+      const endOfDay = getTZ(dayjs().set("hour", 23).set("minute", 59).set("second", 59).set("millisecond", 999))
 
       const calculateReference = (
         date: string | Date,
@@ -78,7 +78,7 @@ export class TransactionsController {
         name: data.name,
         type: data.type,
         amount: data.amount,
-        transactionDate: new Date(data.transactionDate),
+        transactionDate: data.transactionDate,
         source: data.source,
         categoryId: data.categoryId ?? undefined,
         referenceMonth: baseReference.referenceMonth,
@@ -87,7 +87,8 @@ export class TransactionsController {
         totalInstallments: null,
         accountId: data.accountId ?? null,
         cardId: data.cardId ?? null,
-        userId
+        userId,
+        isApplied: data.transactionDate <= endOfDay
       }
 
       let payload: TransactionBase[] = [payloadBase]
@@ -108,28 +109,34 @@ export class TransactionsController {
         payload = dateList.map((date, index) => {
           const currentDay = dayjs(date).date()
           const reference = calculateReference(date, closingDay, currentDay)
+          const transactionDate = getTZ(dayjs(date));
 
           return {
             ...payloadBase,
-            transactionDate: new Date(date),
+            transactionDate,
             referenceMonth: reference.referenceMonth,
             referenceYear: reference.referenceYear,
             currenInstallment: index + 1,
             totalInstallments: dateList.length,
+            isApplied: transactionDate <= endOfDay
           }
         })
       }
 
       await this.transactionsModel.createMany(payload);
 
-      if (data.source === 'account' && account && data.transactionDate <= currentDate) {
-        await this.accountsModel.updateBalance({
-          id: account.id,
-          userId,
-          type: data.type === 'income' ? 'increment' : 'decrement',
-          value: data.amount
-        })
-      }
+      const transactionsToApply = payload.filter(tx =>  tx.isApplied)
+
+      for (const tx of transactionsToApply) {
+        if (tx.source === 'account' && account) {
+          await this.accountsModel.updateBalance({
+            id: account.id,
+            userId,
+            type: tx.type === 'income' ? 'increment' : 'decrement',
+            value: +tx.amount
+          })
+        }
+      } 
 
       return new ResponseHandler().success(
         res,
@@ -176,6 +183,8 @@ export class TransactionsController {
       }
 
       const transactions = await this.transactionsModel.findAll(query)
+
+      await this.transactionsModel.updateFutureTransactions()
       
       const formattedTransactions = {
         ...transactions,

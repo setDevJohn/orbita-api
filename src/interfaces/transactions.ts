@@ -15,6 +15,7 @@ export interface TransactionBase {
   accountId: number | null
   cardId: number | null
   userId: number
+  isApplied: boolean
 }
 
 export type TransactionPayloadForm = TransactionBase
