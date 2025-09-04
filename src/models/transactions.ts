@@ -6,9 +6,19 @@ import {
   TransactionPayloadForm,
   TransactionValuesByType
 } from "../interfaces/transactions";
+import { AccountsModel } from "./accounts";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export class TransactionsModel {
-  public constructor () {}
+  private readonly accountModel: AccountsModel
+  public constructor () {
+    this.accountModel = new AccountsModel()
+  }
 
   public async createMany(payloadList: TransactionPayloadForm[]) { 
     return await prisma.transactions.createMany({
@@ -143,5 +153,33 @@ export class TransactionsModel {
     });
 
     return { transactions, valuesByType }
+  }
+
+  public async updateFutureTransactions() {
+    const endOfDay = dayjs()
+      .set("hour", 23)
+      .set("minute", 59)
+      .set("second", 59)
+      .set("millisecond", 999)
+      .tz("America/Sao_Paulo")
+      .format("YYYY-MM-DD HH:mm:ssZ");
+
+    const futureTransactions = await prisma.transactions.findMany({
+      where: {
+        isApplied: false,
+        transactionDate: { lte: endOfDay },
+      }
+    });
+
+    for (const tx of futureTransactions) {
+      if (tx.accountId) {
+        await this.accountModel.updateBalance({
+          id: tx.accountId,
+          userId: 1,
+          type: tx.type === 'income' ? 'increment' : 'decrement',
+          value: +tx.amount
+        })
+      }
+    }
   }
 }
