@@ -122,12 +122,14 @@ export class CardsController {
       const response = await this.cardsModel.findMany(findManyQuery);
 
       const cardsWithInvoiceValue = response.map(({transactions, ...card}) => {
-        const invoiceValue = transactions.reduce((acc, cur) => acc + +cur.amount, 0)
+        const monthlyTransactions = month ? transactions.filter(t => t.referenceMonth === +month ) : []
+        const monthlyInvoice = monthlyTransactions.reduce((acc, cur) => acc + +cur.amount, 0)
+        const totalInvoice = transactions.reduce((acc, cur) => acc + +cur.amount, 0)
 
         return {
           ...card,
-          invoice: invoiceValue,
-          availableCreditLimit: card?.creditLimit? +card.creditLimit - invoiceValue : 0
+          invoice: monthlyInvoice,
+          availableCreditLimit: card?.creditLimit? +card.creditLimit - totalInvoice : 0
         }
       })
 
