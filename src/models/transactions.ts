@@ -179,6 +179,11 @@ export class TransactionsModel {
           type: tx.type === 'income' ? 'increment' : 'decrement',
           value: +tx.amount
         })
+
+        await prisma.transactions.update({
+          where: { id: tx.id },
+          data: { isApplied: true }
+        })
       }
     }
   }
