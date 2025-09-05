@@ -93,10 +93,6 @@ export class TransactionsController {
 
       let payload: TransactionBase[] = [payloadBase]
 
-      if (data.transferAccountId) {
-        // TODO: transferência de uma conta para a outra
-      }
-
       const isRecurrence = !!data.recurrenceDateRange?.length
 
       if (isRecurrence) {
