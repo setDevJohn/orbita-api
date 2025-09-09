@@ -54,4 +54,11 @@ usersRoutes.post('/password-recovery/confirm-token',
   }
 )
 
+usersRoutes.put('/',
+  usersMiddleware.update,
+  async (req, res) => {
+    await usersController.update(req, res)
+  } 
+)
+
 export { usersRoutes }  

@@ -63,15 +63,15 @@ export class UsersMiddleware {
       errorHandler(err as Error, res)
     }
   }
-
+  
   public recoverPassword (req: Request, res: Response, next: NextFunction) {
     try {
       const { userId, password, token } = req.body || {}
-
+      
       if (!userId) {
         throw new AppError('Id do usuário é obrigatório', HttpStatus.BAD_REQUEST)
       }  
-
+      
       if (Number.isNaN(+userId) || !Number.isInteger(+userId)) {
         throw new AppError('Id do usuário deve ser um número inteiro', HttpStatus.BAD_REQUEST)
       }
@@ -137,6 +137,35 @@ export class UsersMiddleware {
       }
       
       next()
+    } catch (err) {
+      errorHandler(err as Error, res)
+    }
+  }
+  
+  public update (req: Request, res: Response, next: NextFunction) {
+    try {
+      const { name, cellPhone, email, wage, payday } = req.body || {}
+
+      if (cellPhone && cellPhone.length > 11) {
+        throw new AppError('Tamanho máximo do campo cellPhone é 11', HttpStatus.BAD_REQUEST)
+      }
+
+      if (wage && Number.isNaN(+wage)) {
+        throw new AppError('O campo wage deve ser numérico', HttpStatus.BAD_REQUEST)
+      }
+
+      if (wage && !payday) {
+        throw new AppError('A data de pagamento deve ser cadastrad junto ao salário', HttpStatus.BAD_REQUEST)
+      }
+              
+      req.body = { 
+        ...(name && { name }),
+        ...(cellPhone && { cellPhone }),
+        ...(email && { email }),
+        ...(wage && { wage }),
+        ...(payday && { payday })
+      }
+      next();
     } catch (err) {
       errorHandler(err as Error, res)
     }

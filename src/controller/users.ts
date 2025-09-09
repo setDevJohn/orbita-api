@@ -7,6 +7,7 @@ import bcrypt from 'bcrypt'
 import { generateToken, verifyToken } from "../helpers/jwt";
 import { sendEmail } from "../emailService";
 import { generateRandonToken } from "../helpers/generateToken";
+import { UpdateUserParams } from "../interfaces/users";
 
 export class UsersController {
   private usersModel: UsersModel;
@@ -194,6 +195,43 @@ export class UsersController {
         throw new AppError('Token inválido', HttpStatus.BAD_REQUEST)
       }
 
+      return new ResponseHandler().success(res, user);
+    } catch (err) {
+      return errorHandler(err as Error, res);
+    }
+  }
+  
+  public async update (req: Request, res: Response) {
+    try {
+      const { id: userId } = res.locals.user || {}
+      const data = req.body as UpdateUserParams|| {}
+
+      const user = await this.usersModel.findOne({ id: +userId })
+
+      if (!user) {
+        throw new AppError('Usuário não encontrado', HttpStatus.NOT_FOUND)
+      }
+
+      if (data.email && data.email !== user.email) {
+        const existingEmail = await this.usersModel.findOne({ email: data.email })
+
+        if (existingEmail) {
+          throw new AppError('Este e-mail já está em uso', HttpStatus.CONFLICT)
+        }
+        
+        // TODO: Enviar token para confirmação de conta
+      }
+
+      const payload = {
+        ...(data.name && { name: data.name }),
+        ...(data.cellPhone && { cellPhone: data.cellPhone }),
+        ...(data.email && { email: data.email }),
+        ...(data.wage && { wage: data.wage }),
+        ...(data.payday && { payday: data.payday }),
+      }
+
+      await this.usersModel.update(+userId, payload)
+      
       return new ResponseHandler().success(res, user);
     } catch (err) {
       return errorHandler(err as Error, res);

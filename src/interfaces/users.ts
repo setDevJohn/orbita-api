@@ -27,6 +27,17 @@ export interface FindOneParams {
 }
 
 export interface UpdateUserParams {
+  name?: string 
+  cellPhone?: string | null
+  email?: string 
+  wage?: string | null
+  payday?: number | null
+  active?: boolean 
+  verified?: boolean | null
+  failedAttempts?: number | null
+  accountVerificationToken?: string | null
+  lockedUntil?: Date | null
+  lastLogin?: Date | null
   password?: string
   passwordResetToken?: string | null
 }

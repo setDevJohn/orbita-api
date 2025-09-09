@@ -23,7 +23,18 @@ export class UsersModel {
   public async update(id: number, data: UpdateUserParams) {
     return prisma.users.update({
       where: { id },
-      data: { 
+      data: {
+        ...(data.name && { name: data.name }),
+        ...(data.cellPhone && { cellPhone: data.cellPhone }),
+        ...(data.email && { email: data.email }),
+        ...(data.wage && { wage: data.wage }),
+        ...(data.payday && { payday: data.payday }),
+        ...(data.active && { active: data.active }),
+        ...(data.verified && { verified: data.verified }),
+        ...(data.failedAttempts && { failedAttempts: data.failedAttempts }),
+        ...(data.accountVerificationToken && { accountVerificationToken: data.accountVerificationToken }),
+        ...(data.lockedUntil && { lockedUntil: data.lockedUntil }),
+        ...(data.lastLogin && { lastLogin: data.lastLogin }),
         ...(data.password && { password: data.password }),
         ...(data.passwordResetToken && { passwordResetToken: data.passwordResetToken })
       }
