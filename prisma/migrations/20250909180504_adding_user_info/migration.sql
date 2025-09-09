@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `users` ADD COLUMN `cell_phone` VARCHAR(11) NULL,
+    ADD COLUMN `payday` TINYINT NULL,
+    ADD COLUMN `wage` DECIMAL(10, 2) NULL DEFAULT 0.00;
