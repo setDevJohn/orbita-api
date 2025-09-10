@@ -83,11 +83,8 @@ model transactions {
 model users {
   id                       Int            @id @default(autoincrement())
   name                     String         @db.VarChar(100)
-  cellPhone                String?        @map("cell_phone") @db.VarChar(11)
   email                    String         @unique(map: "email") @db.VarChar(100)
   password                 String         @db.VarChar(255)
-  wage                     Decimal?       @default(0.00) @db.Decimal(10, 2)
-  payday                   Int?           @db.TinyInt
   active                   Boolean        @default(true)
   verified                 Boolean?       @default(false)
   failedAttempts           Int?           @default(0) @map("failed_attempts")
@@ -98,6 +95,9 @@ model users {
   deletedAt                DateTime?      @map("deleted_at") @db.Timestamp(0)
   createdAt                DateTime?      @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt                DateTime?      @map("updated_at") @db.Timestamp(0)
+  cellPhone                String?        @map("cell_phone") @db.VarChar(11)
+  payday                   Int?           @db.TinyInt
+  wage                     Decimal?       @default(0.00) @db.Decimal(10, 2)
   accounts                 accounts[]
   cards                    cards[]
   categories               categories[]
