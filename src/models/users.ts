@@ -17,6 +17,22 @@ export class UsersModel {
         ...(id && { id }),
         ...(email && { email })
       },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        password: true,
+        cellPhone: true,
+        wage: true,
+        payday: true,
+        active: true,
+        verified: true,
+        failedAttempts: true,
+        passwordResetToken: true,
+        accountVerificationToken: true,
+        lockedUntil: true,
+        lastLogin: true,
+      }
     }); 
   }
 

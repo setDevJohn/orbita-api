@@ -1,8 +1,13 @@
+import { Decimal } from "@prisma/client/runtime/library";
+
 export interface UserBase {
   id: number;
   name: string;
   email: string;
   password: string;
+  cellPhone: string | null;
+  wage: Decimal | null;
+  payday: number | null;
   active: boolean;
   verified: boolean | null;
   failedAttempts: number | null;
@@ -10,9 +15,6 @@ export interface UserBase {
   accountVerificationToken: string | null;
   lockedUntil: Date | null;
   lastLogin: Date | null;
-  deletedAt: Date | null;
-  createdAt: Date | null;
-  updatedAt: Date | null;
 }
 
 export interface UserPayloadDTO {

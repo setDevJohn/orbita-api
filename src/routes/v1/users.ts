@@ -61,4 +61,10 @@ usersRoutes.put('/',
   } 
 )
 
+usersRoutes.get('/info',
+  async (req, res) => {
+    await usersController.findInfo(req, res)
+  }
+)
+
 export { usersRoutes }  

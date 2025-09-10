@@ -175,7 +175,7 @@ export class UsersController {
         token: generatedToken
       })
 
-      return new ResponseHandler().success(res, user);
+      return new ResponseHandler().success(res, { id: user.id });
     } catch (err) {
       return errorHandler(err as Error, res);
     }
@@ -195,7 +195,7 @@ export class UsersController {
         throw new AppError('Token inválido', HttpStatus.BAD_REQUEST)
       }
 
-      return new ResponseHandler().success(res, user);
+      return new ResponseHandler().success(res, null);
     } catch (err) {
       return errorHandler(err as Error, res);
     }
@@ -230,9 +230,45 @@ export class UsersController {
         ...(data.payday && { payday: data.payday }),
       }
 
-      await this.usersModel.update(+userId, payload)
+      const userUpdated = await this.usersModel.update(+userId, payload)
+
+      const userInfo = {
+        id: userUpdated.id,
+        name: userUpdated.name,
+        email: userUpdated.email,
+        cellPhone: userUpdated.cellPhone,
+        wage: userUpdated.wage,
+        payday: userUpdated.payday,
+        verified: userUpdated.verified,
+      }
       
-      return new ResponseHandler().success(res, user);
+      return new ResponseHandler().success(res, userInfo);
+    } catch (err) {
+      return errorHandler(err as Error, res);
+    }
+  }
+  
+  public async findInfo (_req: Request, res: Response) {
+    try {
+      const { id: userId } = res.locals.user || {}
+
+      const user = await this.usersModel.findOne({ id: +userId })
+
+      if (!user) {
+        throw new AppError('Usuário não encontrado', HttpStatus.NOT_FOUND)
+      }
+
+      const userInfo = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        cellPhone: user.cellPhone,
+        wage: user.wage,
+        payday: user.payday,
+        verified: user.verified,
+      }
+      
+      return new ResponseHandler().success(res, userInfo);
     } catch (err) {
       return errorHandler(err as Error, res);
     }
