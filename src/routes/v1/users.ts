@@ -65,7 +65,16 @@ usersRoutes.put('/',
   } 
 )
 
+usersRoutes.patch('/update-password',
+  authMiddleware.validate,
+  usersMiddleware.updatePassword,
+  async (req, res) => {
+    await usersController.updatePassword(req, res)
+  } 
+)
+
 usersRoutes.get('/info',
+  authMiddleware.validate,
   async (req, res) => {
     await usersController.findInfo(req, res)
   }

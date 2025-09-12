@@ -248,6 +248,40 @@ export class UsersController {
     }
   }
   
+  public async updatePassword (req: Request, res: Response) {
+    try {
+      const { id: userId } = res.locals.user || {}
+      const { currentPassword, newPassword } = req.body || {}
+
+      const user = await this.usersModel.findOne({ id: +userId })
+
+      if (!user) {
+        throw new AppError('Usuário não encontrado', HttpStatus.NOT_FOUND)
+      }
+
+      const isPasswordValid = await bcrypt.compare(
+        currentPassword,
+        user.password
+      )
+
+      if (!isPasswordValid) {
+        throw new AppError(
+          'Senha inválida!',
+          HttpStatus.BAD_REQUEST
+        )
+      }
+
+      const SALT_ROUNDS = 10
+      const passHashed = await bcrypt.hash(newPassword, SALT_ROUNDS)
+
+      await this.usersModel.update(userId, { password: passHashed })
+      
+      return new ResponseHandler().success(res, null);
+    } catch (err) {
+      return errorHandler(err as Error, res);
+    }
+  }
+  
   public async findInfo (_req: Request, res: Response) {
     try {
       const { id: userId } = res.locals.user || {}

@@ -170,4 +170,39 @@ export class UsersMiddleware {
       errorHandler(err as Error, res)
     }
   }
+  
+  public updatePassword (req: Request, res: Response, next: NextFunction) {
+    try {
+      const { currentPassword, newPassword } = req.body || {}
+
+      if (!currentPassword) {
+        throw new AppError('Senha atual não enviada', HttpStatus.BAD_REQUEST);
+      }
+
+      if (typeof(currentPassword) !== 'string') {
+        throw new AppError('Senha atual deve ser uma string', HttpStatus.BAD_REQUEST)
+      }
+
+      if (currentPassword.length < 6) {
+        throw new AppError('Senha atual deve ter no mínimo 6 caracteres', HttpStatus.BAD_REQUEST)
+      }
+
+      if (!newPassword) {
+        throw new AppError('Nova senha não enviada', HttpStatus.BAD_REQUEST);
+      }
+
+      if (typeof(newPassword) !== 'string') {
+        throw new AppError('Nova senha deve ser uma string', HttpStatus.BAD_REQUEST)
+      }
+
+      if (newPassword.length < 6) {
+        throw new AppError('Nova senha deve ter no mínimo 6 caracteres', HttpStatus.BAD_REQUEST)
+      }
+
+      req.body = { currentPassword, newPassword }
+      next();
+    } catch (err) {
+      errorHandler(err as Error, res)
+    }
+  }
 }
