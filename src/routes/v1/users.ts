@@ -1,11 +1,14 @@
 import { UsersController } from '../../controller/users';
 import { Router } from "express";
 import { UsersMiddleware } from '../../middleware/users';
+import { AuthMiddleware } from '../../middleware/auth';
 
 const usersRoutes = Router();
 
 const usersMiddleware = new UsersMiddleware();
 const usersController = new UsersController();
+
+const authMiddleware = new AuthMiddleware();
 
 usersRoutes.post('/auth', 
   usersMiddleware.auth,
@@ -55,6 +58,7 @@ usersRoutes.post('/password-recovery/confirm-token',
 )
 
 usersRoutes.put('/',
+  authMiddleware.validate,
   usersMiddleware.update,
   async (req, res) => {
     await usersController.update(req, res)
