@@ -2,6 +2,7 @@ import { UsersController } from '../../controller/users';
 import { Router } from "express";
 import { UsersMiddleware } from '../../middleware/users';
 import { AuthMiddleware } from '../../middleware/auth';
+import { upload } from '../../multerConfig';
 
 const usersRoutes = Router();
 
@@ -77,6 +78,14 @@ usersRoutes.get('/info',
   authMiddleware.validate,
   async (req, res) => {
     await usersController.findInfo(req, res)
+  }
+)
+
+usersRoutes.put('/update-profile-image',
+  authMiddleware.validate,
+  upload.single("file"),
+  async (req, res) => {
+    await usersController.updateProfileImage(req, res)
   }
 )
 

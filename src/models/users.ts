@@ -25,6 +25,7 @@ export class UsersModel {
         cellPhone: true,
         wage: true,
         payday: true,
+        profileImage: true,
         active: true,
         verified: true,
         failedAttempts: true,

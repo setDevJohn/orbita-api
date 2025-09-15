@@ -6,6 +6,7 @@ export interface UserBase {
   email: string;
   password: string;
   cellPhone: string | null;
+  profileImage: string | null
   wage: Decimal | null;
   payday: number | null;
   active: boolean;
@@ -35,6 +36,7 @@ export interface UpdateUserParams {
   wage?: string | null
   payday?: number | null
   active?: boolean 
+  profileImage?: string | null
   verified?: boolean | null
   failedAttempts?: number | null
   accountVerificationToken?: string | null

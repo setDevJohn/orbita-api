@@ -4,6 +4,8 @@ import { ResponseHandler } from "../helpers/responseHandler";
 import { UsersModel } from "../models/users";
 import { AppError, HttpStatus } from "../helpers/appError";
 import bcrypt from 'bcrypt'
+import fs from "fs";
+import path from "path";  
 import { generateToken, verifyToken } from "../helpers/jwt";
 import { sendEmail } from "../emailService";
 import { generateRandonToken } from "../helpers/generateToken";
@@ -300,9 +302,51 @@ export class UsersController {
         wage: user.wage,
         payday: user.payday,
         verified: user.verified,
+        profileImage: user.profileImage,
       }
       
       return new ResponseHandler().success(res, userInfo);
+    } catch (err) {
+      return errorHandler(err as Error, res);
+    }
+  }
+  
+  public async updateProfileImage (req: Request, res: Response) {
+    try {
+      const { id: userId } = res.locals.user || {}
+
+      const user = await this.usersModel.findOne({ id: +userId })
+
+      if (!user) {
+        throw new AppError('Usuário não encontrado', HttpStatus.NOT_FOUND)
+      }
+
+      const IMAGE_FOLDER_PATH = process.env.IMAGE_FOLDER_PATH
+
+      if (!IMAGE_FOLDER_PATH) {
+        throw new AppError(
+          'Erro ao carregar variável de ambiente: IMAGE_FOLDER_PATH',
+          HttpStatus.INTERNAL_SERVER_ERROR
+        )
+      }
+
+      if (user.profileImage) {
+        const oldImagePath = path.join(IMAGE_FOLDER_PATH, user.profileImage);
+
+        if (fs.existsSync(oldImagePath)) {
+          await fs.promises.unlink(oldImagePath); // remove o arquivo antigo
+        }
+      }
+
+      if (!req.file) {
+        throw new AppError("Nenhum arquivo enviado", HttpStatus.BAD_REQUEST);
+      }
+
+      await this.usersModel.update(user.id, {
+        profileImage: req.file.filename,
+      });
+            
+      return new ResponseHandler().success(res, null);
     } catch (err) {
       return errorHandler(err as Error, res);
     }
