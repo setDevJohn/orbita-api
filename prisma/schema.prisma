@@ -87,6 +87,7 @@ model users {
   password                 String         @db.VarChar(255)
   active                   Boolean        @default(true)
   verified                 Boolean?       @default(false)
+  profileImage             String?        @map("profile_image") @db.Char(50)
   failedAttempts           Int?           @default(0) @map("failed_attempts")
   passwordResetToken       String?        @map("password_reset_token") @db.VarChar(255)
   accountVerificationToken String?        @map("account_verification_token") @db.VarChar(255)
