@@ -78,11 +78,11 @@ export class UsersController {
         )
       }
 
-      const API_URL = process.env.API_URL
+      const IMAGE_API_URL = process.env.IMAGE_API_URL
 
-      if (!API_URL) {
+      if (!IMAGE_API_URL) {
         throw new AppError(
-          'Erro ao carregar variável de ambiente: API_URL',
+          'Erro ao carregar variável de ambiente: IMAGE_API_URL',
           HttpStatus.INTERNAL_SERVER_ERROR
         )
       }
@@ -92,7 +92,7 @@ export class UsersController {
         email: userExisting.email,
         verified: userExisting.verified ?? false,
         name: userExisting.name,
-        profileImage: userExisting.profileImage ? `${API_URL}/images/${userExisting.profileImage}` : null
+        profileImage: userExisting.profileImage ? `${IMAGE_API_URL}/${userExisting.profileImage}` : null
       };
 
       const token = generateToken(tokenData, stayConect);
@@ -303,11 +303,11 @@ export class UsersController {
         throw new AppError('Usuário não encontrado', HttpStatus.NOT_FOUND)
       }
 
-      const API_URL = process.env.API_URL
+      const IMAGE_API_URL = process.env.IMAGE_API_URL
 
-      if (!API_URL) {
+      if (!IMAGE_API_URL) {
         throw new AppError(
-          'Erro ao carregar variável de ambiente: API_URL',
+          'Erro ao carregar variável de ambiente: IMAGE_API_URL',
           HttpStatus.INTERNAL_SERVER_ERROR
         )
       }
@@ -320,7 +320,7 @@ export class UsersController {
         wage: user.wage,
         payday: user.payday,
         verified: user.verified,
-        profileImage: user.profileImage ? `${API_URL}/images/${user.profileImage}` : null,
+        profileImage: user.profileImage ? `${IMAGE_API_URL}/${user.profileImage}` : null,
       }
       
       return new ResponseHandler().success(res, userInfo);
