@@ -48,6 +48,7 @@ export class UsersModel {
         ...(data.payday && { payday: data.payday }),
         ...(data.active && { active: data.active }),
         ...(data.verified && { verified: data.verified }),
+        ...(data.profileImage && { profileImage: data.profileImage }),
         ...(data.failedAttempts && { failedAttempts: data.failedAttempts }),
         ...(data.accountVerificationToken && { accountVerificationToken: data.accountVerificationToken }),
         ...(data.lockedUntil && { lockedUntil: data.lockedUntil }),
