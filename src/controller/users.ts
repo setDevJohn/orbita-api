@@ -294,6 +294,15 @@ export class UsersController {
         throw new AppError('Usuário não encontrado', HttpStatus.NOT_FOUND)
       }
 
+      const API_URL = process.env.API_URL
+
+      if (!API_URL) {
+        throw new AppError(
+          'Erro ao carregar variável de ambiente: API_URL',
+          HttpStatus.INTERNAL_SERVER_ERROR
+        )
+      }
+
       const userInfo = {
         id: user.id,
         name: user.name,
@@ -302,7 +311,7 @@ export class UsersController {
         wage: user.wage,
         payday: user.payday,
         verified: user.verified,
-        profileImage: user.profileImage,
+        profileImage: user.profileImage ? `${API_URL}/images/${user.profileImage}` : '',
       }
       
       return new ResponseHandler().success(res, userInfo);
