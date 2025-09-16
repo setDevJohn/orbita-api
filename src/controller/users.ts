@@ -369,4 +369,24 @@ export class UsersController {
       return errorHandler(err as Error, res);
     }
   }
+  
+  public async deleteAccount (req: Request, res: Response) {
+    try {
+      const { id: userId } = res.locals.user || {}
+
+      const user = await this.usersModel.findOne({ id: +userId })
+
+      if (!user) {
+        throw new AppError('Usuário não encontrado', HttpStatus.NOT_FOUND)
+      }
+
+      await this.usersModel.update(user.id, {
+        deletedAt: new Date()
+      });
+            
+      return new ResponseHandler().success(res, null);
+    } catch (err) {
+      return errorHandler(err as Error, res);
+    }
+  }
 }

@@ -89,4 +89,11 @@ usersRoutes.put('/update-profile-image',
   }
 )
 
+usersRoutes.delete('/',
+  authMiddleware.validate,
+  async (req, res) => {
+    await usersController.deleteAccount(req, res)
+  }
+)
+
 export { usersRoutes }  

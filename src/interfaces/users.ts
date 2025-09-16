@@ -44,4 +44,5 @@ export interface UpdateUserParams {
   lastLogin?: Date | null
   password?: string
   passwordResetToken?: string | null
+  deletedAt?: Date | null
 }

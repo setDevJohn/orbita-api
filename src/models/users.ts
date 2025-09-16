@@ -54,7 +54,8 @@ export class UsersModel {
         ...(data.lockedUntil && { lockedUntil: data.lockedUntil }),
         ...(data.lastLogin && { lastLogin: data.lastLogin }),
         ...(data.password && { password: data.password }),
-        ...(data.passwordResetToken && { passwordResetToken: data.passwordResetToken })
+        ...(data.passwordResetToken && { passwordResetToken: data.passwordResetToken }),
+        ...(data.deletedAt && { deletedAt: data.deletedAt })
       }
     })
   }
