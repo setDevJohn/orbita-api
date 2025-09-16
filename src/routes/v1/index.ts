@@ -5,11 +5,13 @@ import { cardsRoutes } from "./cards";
 import { accountsRoutes } from "./accounts";
 import { categoriesRoutes } from "./categories";
 import { transactionsRoutes } from "./transactions";
+import { imagesRoutes } from './images';
 
 const v1routes = Router()
 const authMiddleware = new AuthMiddleware();
 
 v1routes.use('/users', usersRoutes)
+v1routes.use('/images', imagesRoutes)
 v1routes.use('/cards', authMiddleware.validate, cardsRoutes)
 v1routes.use('/accounts', authMiddleware.validate, accountsRoutes)
 v1routes.use('/categories', authMiddleware.validate, categoriesRoutes)
