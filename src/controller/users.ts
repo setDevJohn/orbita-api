@@ -77,13 +77,22 @@ export class UsersController {
           HttpStatus.UNAUTHORIZED
         )
       }
+
+      const API_URL = process.env.API_URL
+
+      if (!API_URL) {
+        throw new AppError(
+          'Erro ao carregar variável de ambiente: API_URL',
+          HttpStatus.INTERNAL_SERVER_ERROR
+        )
+      }
       
       const tokenData = {
         id: userExisting.id,
         email: userExisting.email,
         verified: userExisting.verified ?? false,
         name: userExisting.name,
-        profileImage: `${process.env.API_URL}/image/users/${userExisting.id}`
+        profileImage: userExisting.profileImage ? `${API_URL}/images/${userExisting.profileImage}` : null
       };
 
       const token = generateToken(tokenData, stayConect);
@@ -311,7 +320,7 @@ export class UsersController {
         wage: user.wage,
         payday: user.payday,
         verified: user.verified,
-        profileImage: user.profileImage ? `${API_URL}/images/${user.profileImage}` : '',
+        profileImage: user.profileImage ? `${API_URL}/images/${user.profileImage}` : null,
       }
       
       return new ResponseHandler().success(res, userInfo);

@@ -7,7 +7,7 @@ export interface ITokenData {
   email: string;
   verified: boolean;
   name: string;
-  profileImage: string;
+  profileImage: string | null;
 }
 
 export function generateToken(user: ITokenData, stayConect: boolean): string {
