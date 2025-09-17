@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { errorHandler } from "../helpers/errorHandler";
 import { AppError, HttpStatus } from "../helpers/appError";
-import { upload } from "../multerConfig";
 
 export class UsersMiddleware {
   constructor() {
