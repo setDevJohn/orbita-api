@@ -59,4 +59,10 @@ export class UsersModel {
       }
     })
   }
+
+  public async findSettings(userId: number) {
+    return prisma.settings.findFirst({
+      where: { userId }
+    })
+  }
 }

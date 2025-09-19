@@ -96,4 +96,11 @@ usersRoutes.delete('/',
   }
 )
 
+usersRoutes.get('/settings',
+  authMiddleware.validate,
+  async (req, res) => {
+    await usersController.findSettings(req, res)
+  }
+)
+
 export { usersRoutes }  

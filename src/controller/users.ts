@@ -389,4 +389,22 @@ export class UsersController {
       return errorHandler(err as Error, res);
     }
   }
+  
+  public async findSettings (_req: Request, res: Response) {
+    try {
+      const { id: userId } = res.locals.user || {}
+
+      const user = await this.usersModel.findOne({ id: +userId })
+
+      if (!user) {
+        throw new AppError('Usuário não encontrado', HttpStatus.NOT_FOUND)
+      }
+
+      const settings = await this.usersModel.findSettings(+userId);
+            
+      return new ResponseHandler().success(res, settings);
+    } catch (err) {
+      return errorHandler(err as Error, res);
+    }
+  }
 }

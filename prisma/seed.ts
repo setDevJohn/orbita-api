@@ -77,9 +77,10 @@ async function main() {
     data: {
       userId: user.id,
       data: {
-        theme: 'dark',
-        notifications: true,
         currency: 'BRL',
+        pushNotifications: true,
+        smsNotifications: true,
+        mailNotifications: true,
         transactionPosting: 'after-closing'
       },
     },

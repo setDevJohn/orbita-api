@@ -124,3 +124,12 @@ enum transactions_source {
   account
   card
 }
+
+enum settings_tranasction_posting {
+  sameDay
+  afterClosing
+}
+
+enum settings_currency {
+  BRL
+}
