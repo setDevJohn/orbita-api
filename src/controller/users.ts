@@ -113,7 +113,7 @@ export class UsersController {
     }
   }
 
-  public async verify (req: Request, res: Response) {
+  public async verifyUserToken (req: Request, res: Response) {
     try {
       const token = req.cookies?.token;
 

@@ -27,7 +27,7 @@ usersRoutes.post('/',
 
 usersRoutes.get('/verify', 
   async (req, res) => {
-    await usersController.verify(req, res);
+    await usersController.verifyUserToken(req, res);
   }
 )
 
