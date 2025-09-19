@@ -15,7 +15,7 @@ model accounts {
   createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt    DateTime?      @map("updated_at") @db.Timestamp(0)
   deletedAt    DateTime?      @map("deleted_at") @db.Timestamp(0)
-  users        users          @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "accounts_user_id_fk")
+  users        users          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "accounts_user_id_fk")
   transactions transactions[]
 
   @@index([userId], map: "accounts_user_id_fk")
@@ -31,7 +31,7 @@ model cards {
   createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt    DateTime?      @map("updated_at") @db.Timestamp(0)
   deletedAt    DateTime?      @map("deleted_at") @db.Timestamp(0)
-  users        users          @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cards_user_id_fk")
+  users        users          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "cards_user_id_fk")
   transactions transactions[]
 
   @@index([userId], map: "cards_user_id_fk")
@@ -44,7 +44,7 @@ model categories {
   createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt    DateTime?      @map("updated_at") @db.Timestamp(0)
   deletedAt    DateTime?      @map("deleted_at") @db.Timestamp(0)
-  users        users          @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "categories_user_id_fk")
+  users        users          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "categories_user_id_fk")
   transactions transactions[]
 
   @@index([userId], map: "categories_user_id_fk")
@@ -69,10 +69,10 @@ model transactions {
   updatedAt         DateTime?           @map("updated_at") @db.Timestamp(0)
   deletedAt         DateTime?           @map("deleted_at") @db.Timestamp(0)
   isApplied         Boolean             @default(false) @map("is_applied")
-  categories        categories?         @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_ibfk_1")
-  accounts          accounts?           @relation(fields: [accountId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_ibfk_2")
-  cards             cards?              @relation(fields: [cardId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_ibfk_3")
-  users             users               @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_user_id_fk")
+  categories        categories?         @relation(fields: [categoryId], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "transactions_ibfk_1")
+  accounts          accounts?           @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "transactions_ibfk_2")
+  cards             cards?              @relation(fields: [cardId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "transactions_ibfk_3")
+  users             users               @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "transactions_user_id_fk")
 
   @@index([accountId], map: "account_id")
   @@index([cardId], map: "card_id")
@@ -87,7 +87,6 @@ model users {
   password                 String         @db.VarChar(255)
   active                   Boolean        @default(true)
   verified                 Boolean?       @default(false)
-  profileImage             String?        @map("profile_image") @db.Char(50)
   failedAttempts           Int?           @default(0) @map("failed_attempts")
   passwordResetToken       String?        @map("password_reset_token") @db.VarChar(255)
   accountVerificationToken String?        @map("account_verification_token") @db.VarChar(255)
@@ -99,6 +98,7 @@ model users {
   cellPhone                String?        @map("cell_phone") @db.VarChar(11)
   payday                   Int?           @db.TinyInt
   wage                     Decimal?       @default(0.00) @db.Decimal(10, 2)
+  profileImage             String?        @map("profile_image") @db.Char(50)
   accounts                 accounts[]
   cards                    cards[]
   categories               categories[]
